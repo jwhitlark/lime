@@ -93,6 +93,11 @@ namespace lime {
     return parse_tokens(tokens);
   }
 
+  bool is_separator(char c)
+  {
+    return c == ' ' || c == '\n' || c == '\t';
+  }
+
   vector< string > split(const string& code)
   {
     vector< string > parts;
@@ -101,16 +106,20 @@ namespace lime {
       string part;
       int paren_count = 0;
       bool empty = true;
+      bool list_expr = false;
       do {
         part += code[pos];
         if (code[pos] != ' ' && code[pos] != '\n' && code[pos] != '\t')
           empty = false;
-        if (code[pos] == '(')
+        if (code[pos] == '(') {
           ++paren_count;
+          list_expr = true;
+        }
         else if (code[pos] == ')')
           --paren_count;
         ++pos;
-      } while (paren_count > 0);
+      } while (paren_count > 0 || (!list_expr && pos < code.length() &&
+                                   !is_separator(code[pos])));
       if (!empty)
         parts.push_back(part);
     }

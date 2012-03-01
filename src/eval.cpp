@@ -179,7 +179,7 @@ namespace lime {
       return nil();
     }
     // operator must be an anonymous lambda
-    value operator()(list& lambda_lst) const
+    value operator()(const list& lambda_lst) const
     {
       value lam_p = eval(lambda_lst, env_p);
       return apply_visitor(lambda_call_visitor(expr, env_p), lam_p);
