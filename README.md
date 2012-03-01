@@ -129,13 +129,14 @@ From `list.lm`:
 - `len` (return the length of a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
-
+    ```
     lime> (map (lambda (x) (* x 2)) (quote (1 3 5)))
     (2 6 10)
     lime> (filter odd (range (1 10)))
     (1 3 5 7 9)
     lime> (fold * (range 1 3))
     6
+    ```
 
 Credits
 -------
