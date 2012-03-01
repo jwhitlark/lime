@@ -1,0 +1,25 @@
+(define len
+  (lambda (l)
+    (if (null? l)
+        0
+        (+ 1 (len (tail l))))))
+
+(define map
+  (lambda (f l)
+    (if (null? l)
+        (quote ())
+        (cons (f (head l)) (map f (tail l))))))
+
+(define filter
+  (lambda (p l)
+    (if (null? l)
+        (quote ())
+        (if (p (head l))
+            (cons (head l) (filter p (tail l)))
+            (filter p (tail l))))))
+
+(define fold
+  (lambda (f i l)
+    (if (null? l)
+        i
+        (fold f (f i (head l)) (tail l)))))

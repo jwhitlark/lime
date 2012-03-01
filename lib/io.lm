@@ -1,0 +1,5 @@
+(define println 
+  (lambda (x) 
+    (begin 
+      (print x)
+      (print "\n")))) 
