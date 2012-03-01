@@ -79,14 +79,13 @@ Builtin functions:
 
 User input is treated as code:
 
-    ```
     lime> (define foo (read))
     (lambda (x) (+ x 1))
     lime> (foo 2)
     3
-    ```
 
 Library functions:
+
 From `io.lm`:
 
 - `println` (print the argument and append a newline)
@@ -126,17 +125,17 @@ From `functional.lm`:
     ```
 
 From `list.lm`:
+
 - `len` (return the length of a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
-    ```
+
     lime> (map (lambda (x) (* x 2)) (quote (1 3 5)))
     (2 6 10)
     lime> (filter odd (range (1 10)))
     (1 3 5 7 9)
     lime> (fold * (range 1 3))
     6
-    ```
 
 Credits
 -------
