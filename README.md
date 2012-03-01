@@ -106,7 +106,7 @@ From `numeric.lm`:
 - `range`
 
     ```
-    lime> (range (1 5))
+    lime> (range 1 5)
     (1 2 3 4 5)
     ```
 
