@@ -51,16 +51,18 @@ Builtin functions:
 - `<`, `+`, `-`, `\`*, `/`, `%` (all binary operators for int)
 - `null?` (whether a list is empty or not)
 
-    ```lime> (null? (quote ()))
-       true
-       lime> (null? (quote (1 2 3)))
-       false
+    ```
+    lime> (null? (quote ()))
+    true
+    lime> (null? (quote (1 2 3)))
+    false
     ```
   
 - `cons` (construct a new list by appending an element on the front)
 
-    ```lime> (cons 1 (quote (2 3)))
-       (1 2 3)
+    ```
+    lime> (cons 1 (quote (2 3)))
+    (1 2 3)
     ```
 
 - `head` (return the first element of a non-empty list)
@@ -68,18 +70,21 @@ Builtin functions:
 - `print` (print the argument's value, without a newline)
 - `read` (read an expression from standard input)
 
-    ```lime> (define x (read))
-       5
-       lime> x
-       5
+    ```
+    lime> (define x (read))
+    5
+    lime> x
+    5
     ```
 
 User input is treated as code:
 
+    ```
     lime> (define foo (read))
     (lambda (x) (+ x 1))
     lime> (foo 2)
     3
+    ```
 
 Library functions:
 From `io.lm`:
@@ -94,14 +99,16 @@ From `numeric.lm`:
 - `even`, `odd`
 - `sum`, `product` (sum/multiply the values in a list of integers)
 
-    ```lime> (sum (quote (1 2 3)))
-       6
+    ```
+    lime> (sum (quote (1 2 3)))
+    6
     ```
 
 - `range`
 
-    ```lime> (range (1 5))
-       (1 2 3 4 5)
+    ```
+    lime> (range (1 5))
+    (1 2 3 4 5)
     ```
 
 - `square`, `pow`, `fact`
@@ -111,22 +118,25 @@ From `functional.lm`:
 - `not` (negate a boolean value)
 - `compose` (compose two functions)
 
-    ```lime> (define add1 (lambda (x) (+ x 1)))
-       lime> (define multiply2 (lambda (x) (* x 2)))
-       lime> ( (compose add1 multiply2) 3)
-       7
+    ```
+    lime> (define add1 (lambda (x) (+ x 1)))
+    lime> (define multiply2 (lambda (x) (* x 2)))
+    lime> ( (compose add1 multiply2) 3)
+    7
     ```
 
 From `list.lm`:
 - `len` (return the length of a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
+    ```
     lime> (map (lambda (x) (* x 2)) (quote (1 3 5)))
     (2 6 10)
     lime> (filter odd (range (1 10)))
     (1 3 5 7 9)
     lime> (fold * (range 1 3))
     6
+    ```
 
 Credits
 -------
