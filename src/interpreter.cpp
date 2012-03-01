@@ -27,6 +27,7 @@ namespace lime {
 
   // lime
   using lime::eval;
+  using lime::paren_match;
   using lime::parse;
   using lime::print_stream;
   using lime::split;
@@ -74,13 +75,26 @@ namespace lime {
   void repl(shared_ptr< environment > env_p)
   {
     cout << prompt;
-    string code;
-    while (getline(cin, code)) {
-      value retval = eval(parse(code), env_p);
-      apply_visitor(return_value_visitor(), retval);
+    string line;
+    while (getline(cin, line)) {
+      string code = line;
+      while (!paren_match(code)) {
+        if (!getline(cin, line)) {
+          cout << bye;
+          return;
+        }
+        code += " " + line;
+      }
+      vector< string > parts = split(code);
+      for (auto it = begin(parts); it + 1 < end(parts); ++it)
+        eval(parse(*it), env_p);
+      if (!parts.empty()) {
+        value retval = eval(parse(parts.back()), env_p);
+        apply_visitor(return_value_visitor(), retval);
+      }
       cout << prompt;
     }
-    cout << "\nBye.\n";
+    cout << bye;
   }
   
 } // namespace lime

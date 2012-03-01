@@ -20,6 +20,8 @@ namespace lime {
 
   vector< string > split(const string& code);
 
+  bool paren_match(const string& code);
+
 } // namespace lime
 
 #endif // __PARSE_HPP__

@@ -17,6 +17,8 @@ namespace lime {
 
   const string prompt("lime> ");
 
+  const string bye("\nBye.\n");
+
   const vector< string > stdlibs { "io.lm",
                                    "functional.lm",
                                    "list.lm",

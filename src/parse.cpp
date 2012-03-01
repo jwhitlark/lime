@@ -116,5 +116,19 @@ namespace lime {
     }
     return parts;
   }
+
+  bool paren_match(const string& code)
+  {
+    int paren_count = 0;
+    for (char c: code)
+      if (c == '(')
+        ++paren_count;
+      else if (c == ')') {
+        if (paren_count == 0)
+          return false;
+        --paren_count;
+      }
+    return paren_count == 0;
+  }
   
 } // namespace lime
