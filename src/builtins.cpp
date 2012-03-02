@@ -23,6 +23,7 @@ namespace lime {
   using lime::eval;
   using lime::nil;
   using lime::parse;
+  using lime::print_stream;
 
   class equals_visitor : public static_visitor< bool > {
   public:
@@ -273,7 +274,7 @@ namespace lime {
   value print::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'print' (must be 1).");
-    cout << args[0];
+    print_stream(cout, eval(args[0], caller_env_p));
     return nil();
   }
 
