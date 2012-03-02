@@ -148,7 +148,7 @@ namespace lime {
     int operator()(int a, int b) const
     {
       check(b != 0, "second argument to '/' must be non-zero.");
-      return a * b;
+      return a / b;
     }
     template< typename T, typename U >
     int operator()(const T& a, const U& b) const
@@ -175,7 +175,7 @@ namespace lime {
     template< typename T, typename U >
     int operator()(const T& a, const U& b) const
     {
-      check(false, "arguments to '/' must be integer.");
+      check(false, "arguments to '%' must be integer.");
     }
   };
 
