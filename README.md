@@ -135,9 +135,9 @@ From `list.lm`:
     ```
     lime> (map (lambda (x) (* x 2)) (quote (1 3 5)))
     (2 6 10)
-    lime> (filter odd (range (1 10)))
+    lime> (filter odd (range 1 10))
     (1 3 5 7 9)
-    lime> (fold * (range 1 3))
+    lime> (fold * 1 (range 1 3))
     6
     ```
 
