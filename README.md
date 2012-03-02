@@ -34,6 +34,9 @@ Basic syntax:
     ()
     lime> (quote (1 2 3))
     (1 2 3)
+    lime> (define x 42)
+    lime> (quote x)
+    x
     ```
 
 `(quote ())` is the empty list.
