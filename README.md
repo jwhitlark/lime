@@ -51,7 +51,7 @@ Builtin functions:
 
 - `nil`, `true`, `false` (trivial constructors)
 - `=` (works with int, string, bool)
-- `<`, `+`, `-`, `\`*, `/`, `%` (all binary operators for int)
+- `<`, `+`, `-`, `\`, `/`, `%` (all binary operators for int)
 - `null?` (whether a list is empty or not)
 
     ```
