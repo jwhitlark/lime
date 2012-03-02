@@ -1,7 +1,16 @@
-(define fib
+(define fib-slow
   (lambda (n)
     (if (< n 2)
         n
-        (+ (fib (- n 1)) 
-            (fib (- n 2))))))
+        (+ (fib-slow (- n 1)) 
+           (fib-slow (- n 2))))))
 
+(define fib
+  (lambda (n)
+    (begin
+      (define fib-aux
+        (lambda (n a b)
+          (if (= n 0)
+              a
+              (fib-aux (- n 1) b (+ a b)))))
+    (fib-aux n 0 1))))
