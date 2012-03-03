@@ -106,7 +106,7 @@ From `numeric.lm`:
     6
     ```
 
-- `max`, `min`
+- `max`, `min` (for lists of integers)
 
 - `range`
 
