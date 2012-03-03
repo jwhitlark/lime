@@ -27,7 +27,27 @@ Basic syntax:
 - `(define x expr)` (define a symbol for the first time)
 - `(set! x expr)` (redefine a symbol)
 - `(begin expr1 expr2 ...)` (execute several expressions sequentially, in a nested environment; the last expression determines the return value of the whole block)
-- `(quote x)` (return x without evaluating it)
+- `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
+- `(lambda (params) expr)` (create an anonymous function)
+
+Supported variable types: int, string, bool, lambda, list, nil
+
+Builtin functions:
+
+- `nil`, `true`, `false` (trivial constructors)
+- `list` (create a list with the arguments as elements)
+
+    ```
+    lime> (list 1 2 3)
+    (1 2 3)
+    lime> (define x 7)
+    lime> (list 1 2 x)
+    (1 2 7)
+    lime> (list)
+    ()
+    ```
+
+- `quote` (return the argument without evaluating it)
 
     ```
     lime> (quote ())
@@ -39,18 +59,15 @@ Basic syntax:
     x
     ```
 
-`(quote ())` is the empty list.
+`(quote ())` and `(list)` are equivalent ways to build an empty list.
 
-- `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
-- `(lambda (params) expr)` (create an anonymous function)
-- `(require "path/to/myfile.lm")` (evaluate the content of the file in the global environment; useful to load functions from external modules)
+- `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
-Supported variable types: int, string, bool, lambda, list, nil
+    ```
+    lime> (require "path/to/myfile.lm")
+    ```
 
-Builtin functions:
-
-- `nil`, `true`, `false` (trivial constructors)
-- `=` (works with any type, including lists)
+- `=` (works with any builtin type, including lists)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
 - `atom?` (true if the argument is anything but a list)
 - `null?` (false if the argument is anything but the empty list)
@@ -97,11 +114,29 @@ User input is treated as code:
     lime> (foo 2)
     3
 
+The language also provides lazy-evaluated, memoized streams as an alternative to lists:
+
+- `cons-stream` (construct a stream from an element and a tail stream)
+
+For example, this is how we build an infinite stream of ones:
+
+    ```
+    lime> (define ones (cons-stream 1 ones))
+    lime> (elem-stream ones 3)
+    1
+    lime> (elem-stream ones 45)
+    1
+    ```
+
+All the remaining functionality is provided in the standard library, as we shall see.
+
 Library functions:
 
 From `io.lm`:
 
 - `println` (print the argument and append a newline)
+
+- `print-stream`, `println-stream` (evaluate and print all elements of a non-infinite stream)
 
 From `numeric.lm`:
 
@@ -109,14 +144,33 @@ From `numeric.lm`:
 - `!=` (actually works for the same types as `=`)
 - `>`, `>=`, `<=`
 - `even`, `odd`
+- `succ` (return the successor of an integer)
+- `enum` (enumerate all integers starting from the argument; returns a stream)
+
+    ```
+    lime> (elem-stream (enum 2) 12)
+    13
+    ```
+
+- `naturals` (the stream of all natural numbers)
+
+    ```
+    lime> (elem naturals 42)
+    42
+    ```
+
 - `sum`, `product` (sum/multiply the values in a list of integers)
 
     ```
     lime> (sum (quote (1 2 3)))
     6
     ```
+
+- `sum-stream`, `product-stream` (for integer streams)
+
 - `max`, `min` (for two integer arguments)
 - `max-list`, `min-list` (for lists of integers)
+- `max-stream`, `min-stream`
 
 - `range`
 
@@ -125,7 +179,18 @@ From `numeric.lm`:
     (1 2 3 4 5)
     ```
 
+- `range-stream` (useful for large ranges)
 - `square`, `pow`, `fact`
+
+- `add` (add two integer lists together)
+
+    ```
+    lime> (add (list 4 5 1)
+               (list 3 1 5))
+    (7 6 6)
+    ```
+
+- `add-stream`
 
 From `logic.lm`:
 
@@ -142,6 +207,10 @@ From `functional.lm`:
     7
     ```
 
+- `partial2` TODO
+
+- `partial3` TODO
+
 From `list.lm`:
 
 - `len` (return the length of a list)
@@ -154,6 +223,45 @@ From `list.lm`:
     (1 3 5 7 9)
     lime> (fold * 1 (range 1 3))
     6
+    ```
+
+- `init` (return all the elements of a non-empty list but the last one)
+- `last` (return the last element of a non-empty list)
+
+    ```
+    lime> (init (list 1 2 3))
+    (1 2)
+    lime> (last (list 1 2 3))
+    3
+    ```
+
+- `for-each` TODO
+- `take`, `drop` TODO
+- `zip`, `zip-with` TODO
+
+From `stream.lm`:
+
+- `empty-stream`
+- `head-stream`, `tail-stream`, `init-stream`, `last-stream`
+- `elem-stream`
+- `eq-stream` (test equality of non-infinite streams)
+- `len-stream`
+- `map-stream`, `filter-stream`, `fold-stream`
+- `for-each-stream`
+- `take-stream`, `drop-stream`
+- `zip-stream`, `zip-with-stream`
+- `repeat` (repeat the argument infinite times)
+
+    ```
+    lime> (elem-stream (repeat 7) 54)
+    7
+    ```
+- `enum-with` (like `enum`, but uses a custom successor function)
+
+    ```
+    lime> (define tf (enum-with not true))
+    lime> (println-stream (take-stream tf 5))
+    (true false true false true)
     ```
 
 Credits
