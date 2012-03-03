@@ -76,7 +76,7 @@ Builtin functions:
 - `elem` (return a particular element of a list)
 
     ```
-    lime> (elem 3 (quote (6 2 5 2 8)))
+    lime> (elem (quote (6 2 5 2 8)) 3)
     5
     ```
 
