@@ -14,3 +14,9 @@
               a
               (fib-aux (- n 1) b (+ a b)))))
     (fib-aux n 0 1))))
+
+(define fib-stream
+  (cons-stream 1
+    (cons-stream 1
+      (add-stream (tail-stream fib-stream)
+                  fib-stream))))

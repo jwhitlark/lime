@@ -33,6 +33,18 @@
         0
         (+ 1 (len-stream (tail-stream s))))))
 
+(define init-stream
+  (lambda (s)
+    (if (= 1 (len-stream s))
+        empty-stream
+        (cons-stream (head-stream s) (init-stream (tail-stream s))))))
+
+(define last-stream
+  (lambda (s)
+    (if (= 1 (len-stream s))
+        (head-stream s)
+        (last-stream (tail-stream s)))))
+
 (define map-stream
   (lambda (f s)
     (if (empty-stream? s)
@@ -92,4 +104,3 @@
 (define enum-with
   (lambda (f i)
     (cons-stream i (enum-with f (f i)))))
-

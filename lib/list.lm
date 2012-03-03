@@ -4,6 +4,18 @@
         0
         (+ 1 (len (tail l))))))
 
+(define init
+  (lambda (l)
+    (if (= 1 (len l))
+        (quote ())
+        (cons (head l) (init (tail l))))))
+
+(define last
+  (lambda (l)
+    (if (= 1 (len l))
+        (head l)
+        (last (tail l)))))
+
 (define map
   (lambda (f l)
     (if (null? l)

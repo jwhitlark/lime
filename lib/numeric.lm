@@ -91,6 +91,10 @@
 
 (define naturals (enum 1))
 
+(define add (partial3 zip-with +))
+
+(define add-stream (partial3 zip-with-stream +))
+
 (define square
   (lambda (x)
     (* x x)))

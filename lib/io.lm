@@ -10,10 +10,10 @@
       (print "(")
       (if (not (empty-stream? s))
           (begin
-            (print (head-stream s))
             (for-each-stream
-              (lambda (x) (begin (print " ") (print x)))
-              (tail-stream s)))
+              (lambda (x) (begin (print x) (print " ")))
+              (init-stream s))
+            (print (last-stream s)))
           nil)
       (print ")"))))
 
