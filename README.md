@@ -73,6 +73,13 @@ Builtin functions:
 
 - `head` (return the first element of a non-empty list)
 - `tail` (return a list with all elements but the first one)
+- `elem` (return a particular element of a list)
+
+    ```
+    lime> (elem 3 (quote (6 2 5 2 8)))
+    5
+    ```
+
 - `print` (print the argument's value, without a newline)
 - `read` (read an expression from standard input)
 

@@ -299,6 +299,28 @@ namespace lime {
     return apply_visitor(tail_visitor(), arg);
   }
 
+  class elem_visitor : public static_visitor< value > {
+  public:
+    value operator()(const int i, const list& lst) const
+    {
+      check(i >= 1 && i <= lst.size(), "list index out of range.");
+      return lst[i - 1];
+    }
+    template< typename T, typename U >
+    value operator()(const T& t, const U& u) const
+    {
+      check(false, "arguments to 'elem' must be an integer and a non-empty list.");
+    }
+  };
+  
+  value elem::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 2, "wrong number of arguments to 'elem' (must be 2).");
+    value arg1 = eval(args[0], caller_env_p);
+    value arg2 = eval(args[1], caller_env_p);
+    return apply_visitor(elem_visitor(), arg1, arg2);
+  }
+
   value print::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'print' (must be 1).");
@@ -331,6 +353,7 @@ namespace lime {
     env_p->set("cons", make_shared< cons >());
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());
+    env_p->set("elem", make_shared< elem >());
     env_p->set("print", make_shared< print >());
     env_p->set("read", make_shared< read >());
   }
