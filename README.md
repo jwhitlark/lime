@@ -50,7 +50,7 @@ Supported variable types: int, string, bool, lambda, list, nil
 Builtin functions:
 
 - `nil`, `true`, `false` (trivial constructors)
-- `=` (works with int, string, bool)
+- `=` (works with any type, including lists)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
 - `atom?` (true if the argument is anything but a list)
 - `null?` (false if the argument is anything but the empty list)
