@@ -106,6 +106,8 @@ From `numeric.lm`:
     6
     ```
 
+- `max`, `min`
+
 - `range`
 
     ```
