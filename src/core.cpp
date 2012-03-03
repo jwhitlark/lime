@@ -19,6 +19,16 @@ namespace lime {
   using lime::check;
   using lime::eval;
 
+  value list::head() const
+  {
+    return front();
+  }
+
+  list list::tail() const
+  {
+    return deque< value >(begin() + 1, end());
+  }
+
   value lambda::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == params.size(), "wrong number of arguments in lambda.");

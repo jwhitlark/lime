@@ -62,6 +62,8 @@ namespace lime {
     {
       push_front(h);
     }
+    value head() const;
+    list tail() const;
   };
 
   class environment;

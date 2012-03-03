@@ -39,15 +39,23 @@ namespace lime {
     {
       return a == b;
     }
-    template< typename T >
-    bool operator()(const T& a, const T& b) const
+    bool operator()(const list& a, const list& b) const
     {
-      check(false, "type of arguments to '=' not supported.");
+      if (a.empty())
+        return b.empty();
+      else if (b.empty())
+        return false;
+      else {
+        equals_visitor eq;
+        value ah(a.head()), bh(b.head());
+        value at(a.tail()), bt(b.tail());
+        return (apply_visitor(eq, ah, bh) && apply_visitor(eq, at, bt));
+      }
     }
     template< typename T, typename U >
     bool operator()(const T& a, const U& b) const
     {
-      check(false, "arguments to '=' must be of the same type.");
+      return false;
     }
   };
 
@@ -254,7 +262,7 @@ namespace lime {
     value operator()(const list& lst) const
     {
       check(!lst.empty(), "argument to 'head' must be a non-empty list.");
-      return lst.front();
+      return lst.head();
     }
     template< typename T >
     value operator()(const T& t) const
@@ -275,7 +283,7 @@ namespace lime {
     list operator()(const list& lst) const
     {
       check(!lst.empty(), "argument to 'tail' must be a non-empty list.");
-      return deque< value >(begin(lst) + 1, end(lst));
+      return lst.tail();
     }
     template< typename T >
     list operator()(const T& t) const
