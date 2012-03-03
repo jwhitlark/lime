@@ -34,7 +34,7 @@
 
 (define take
   (lambda (l n)
-    (if (or (= n 0) (< (len l) n))
+    (if (= n 0)
         (quote ())
         (cons (head l) (take (tail l) (- n 1))))))
 
@@ -51,7 +51,7 @@
     (if (or (null? l1) (null? l2))
         (quote ())
         (cons (f (head l1) (head l2))
-              (zip-with f (tail h1) (tail h2))))))
+              (zip-with f (tail l1) (tail l2))))))
 
 (define zip
   (partial3 zip-with list))

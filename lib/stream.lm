@@ -61,6 +61,30 @@
           (f (head-stream s))
           (for-each-stream f (tail-stream s))))))
 
+(define take-stream
+  (lambda (s n)
+    (if (= n 0)
+        empty-stream
+        (cons-stream (head-stream s) (take-stream (tail-stream s) (- n 1))))))
+
+(define drop-stream
+  (lambda (s n)
+    (if (empty-stream? s)
+        s
+        (if (= 0 n)
+            s
+            (drop-stream (tail-stream s) (- n 1))))))
+
+(define zip-with-stream
+  (lambda (f s1 s2)
+    (if (or (empty-stream? s1) (empty-stream? s2))
+        empty-stream
+        (cons-stream (f (head-stream s1) (head-stream s2))
+              (zip-with-stream f (tail-stream s1) (tail-stream s2))))))
+
+(define zip-stream
+  (partial3 zip-with-stream list))
+
 (define repeat
   (lambda (x)
     (cons-stream x (repeat x))))
