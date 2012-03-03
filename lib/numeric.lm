@@ -25,6 +25,26 @@
 (define odd
   (compose not even))
 
+(define max
+  (lambda (a b)
+    (if (> a b) a b)))
+
+(define min
+  (lambda (a b)
+    (if (< a b) a b)))
+
+(define max-list
+  (lambda (l)
+    (if (= 1 (len l))
+        (head l)
+        (max (head l) (max-list (tail l))))))
+
+(define min-list
+  (lambda (l)
+    (if (= 1 (len l))
+        (head l)
+        (min (head l) (min-list (tail l))))))
+
 (define sum
   (lambda (l)
     (fold + 0 l)))
@@ -38,26 +58,6 @@
     (if (> a b)
         (quote ())
         (cons a (range (+ 1 a) b)))))
-
-(define max
-  (lambda (l)
-    (if (= 1 (len l))
-        (head l)
-        (begin
-          (define max-tail (max (tail l)))
-          (if (< max-tail (head l))
-              (head l)
-              max-tail)))))
-
-(define min
-  (lambda (l)
-    (if (= 1 (len l))
-        (head l)
-        (begin
-          (define min-tail (min (tail l)))
-          (if (> min-tail (head l))
-              (head l)
-              min-tail)))))
 
 (define square
   (lambda (x)

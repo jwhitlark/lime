@@ -108,8 +108,8 @@ From `numeric.lm`:
     lime> (sum (quote (1 2 3)))
     6
     ```
-
-- `max`, `min` (for lists of integers)
+- `max`, `min` (for two integer arguments)
+- `max-list`, `min-list` (for lists of integers)
 
 - `range`
 
