@@ -1,0 +1,12 @@
+(define primes
+  (lambda (n)
+    (begin
+      (define sieve
+        (lambda (l)
+          (if (null? l)
+              l
+              (cons (head l)
+                    (sieve (filter 
+                           (lambda (n) (!= 0 (% n (head l)))) 
+                           (tail l)))))))
+      (sieve (range 2 n)))))
