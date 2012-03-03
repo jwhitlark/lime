@@ -1,0 +1,15 @@
+(define not
+  (lambda (b)
+    (if b false true)))
+
+(define and
+  (lambda (a b)
+    (if a b false)))
+
+(define or
+  (lambda (a b)
+    (if a true b)))
+
+(define xor
+  (lambda (a b)
+    (if a (not b) b)))

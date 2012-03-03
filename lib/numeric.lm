@@ -2,6 +2,8 @@
   (lambda (x)
     (- 0 x)))
 
+(define succ (partial2 + 1))
+
 (define !=
   (lambda (x y)
     (not (= x y))))
@@ -45,6 +47,18 @@
         (head l)
         (min (head l) (min-list (tail l))))))
 
+(define max-stream
+  (lambda (s)
+    (if (= 1 (len-stream s))
+        (head-stream s)
+        (max (head-stream s) (max-stream (tail-stream s))))))
+
+(define min-stream
+  (lambda (s)
+    (if (= 1 (len-stream s))
+        (head-stream s)
+        (min (head-stream s) (min-stream (tail-stream s))))))
+
 (define sum
   (lambda (l)
     (fold + 0 l)))
@@ -53,11 +67,29 @@
   (lambda (l)
     (fold * 1 l)))
 
+(define sum-stream
+  (lambda (s)
+    (fold-stream + 0 s)))
+
+(define product-stream
+  (lambda (s)
+    (fold-stream * 1 s)))
+
 (define range
   (lambda (a b)
     (if (> a b)
         (quote ())
         (cons a (range (+ 1 a) b)))))
+
+(define range-stream
+  (lambda (a b)
+    (if (> a b)
+        empty-stream
+        (cons-stream a (range-stream (+ 1 a) b)))))
+
+(define enum (partial2 enum-with succ))
+
+(define naturals (enum 1))
 
 (define square
   (lambda (x)

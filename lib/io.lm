@@ -3,3 +3,23 @@
     (begin 
       (print x)
       (print "\n")))) 
+
+(define print-stream
+  (lambda (s)
+    (begin
+      (print "(")
+      (if (not (empty-stream? s))
+          (begin
+            (print (head-stream s))
+            (for-each-stream
+              (lambda (x) (begin (print " ") (print x)))
+              (tail-stream s)))
+          nil)
+      (print ")"))))
+
+(define println-stream
+  (lambda (s)
+    (begin
+      (print-stream s)
+      (print "\n"))))
+

@@ -10,3 +10,16 @@
                            (lambda (n) (!= 0 (% n (head l)))) 
                            (tail l)))))))
       (sieve (range 2 n)))))
+
+(define primes-stream
+  (begin
+    (define sieve
+      (lambda (s)
+        (if (empty-stream? s)
+            s
+            (cons-stream (head-stream s)
+                         (sieve (filter-stream
+                                (lambda (n) (!= 0 (% n (head-stream s))))
+                                (tail-stream s)))))))
+    (sieve (enum 2))))
+        

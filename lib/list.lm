@@ -23,3 +23,11 @@
     (if (null? l)
         i
         (fold f (f i (head l)) (tail l)))))
+
+(define for-each
+  (lambda (f l)
+    (if (null? l)
+        nil
+        (begin
+          (f (head l))
+          (for-each f (tail l))))))

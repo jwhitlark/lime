@@ -1,0 +1,71 @@
+(define force
+  (lambda (delayed)
+    (delayed)))
+
+(define empty-stream (quote ()))
+
+(define empty-stream? null?)
+
+(define head-stream
+  (lambda (s)
+    (elem s 1)))
+
+(define tail-stream
+  (lambda (s)
+    (force (elem s 2))))
+
+(define elem-stream
+  (lambda (s i)
+    (if (= i 1)
+        (head-stream s)
+        (elem-stream (tail-stream s) (- i 1)))))
+
+(define eq-stream
+  (lambda (s1 s2)
+    (if (empty-stream? s1)
+        (empty-stream? s2)
+        (and (= (head-stream s1) (head-stream s2))
+             (eq-stream (tail-stream s1) (tail-stream s2))))))
+
+(define len-stream
+  (lambda (s)
+    (if (empty-stream? s)
+        0
+        (+ 1 (len-stream (tail-stream s))))))
+
+(define map-stream
+  (lambda (f s)
+    (if (empty-stream? s)
+        empty-stream
+        (cons-stream (f (head s)) (map-stream f (tail-stream s))))))
+
+(define filter-stream
+  (lambda (p s)
+    (if (empty-stream? s)
+        empty-stream
+        (if (p (head-stream s))
+            (cons-stream (head s) (filter-stream p (tail-stream s)))
+            (filter-stream p (tail-stream s))))))
+
+(define fold-stream
+  (lambda (f i s)
+    (if (empty-stream? s)
+        i
+        (fold-stream f (f i (head-stream s)) (tail-stream s)))))
+
+(define for-each-stream
+  (lambda (f s)
+    (if (empty-stream? s)
+        nil
+        (begin
+          (f (head-stream s))
+          (for-each-stream f (tail-stream s))))))
+
+(define repeat
+  (lambda (x)
+    (cons-stream x (repeat x))))
+
+(define enum-with
+  (lambda (f i)
+    (cons-stream i (enum-with f (f i)))))
+

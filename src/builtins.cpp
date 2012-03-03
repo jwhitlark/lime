@@ -320,6 +320,37 @@ namespace lime {
     value arg2 = eval(args[1], caller_env_p);
     return apply_visitor(elem_visitor(), arg1, arg2);
   }
+  
+  class memoized_proc : public lambda {
+  public:
+    memoized_proc(value x, shared_ptr< environment > e) : 
+      lambda(vector< symbol >(), x, e),
+      already_run(false) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      if (!already_run)
+        cache = lambda::call(args, caller_env_p);
+      return cache;
+    }
+  private:
+    bool already_run;
+    value cache;
+  };
+
+  value delay::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'delay' (must be 1).");
+    return make_shared< memoized_proc >(args[0], caller_env_p);
+  }
+
+  value cons_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 2, "wrong number of arguments to 'cons-stream' (must be 2).");
+    list stream;
+    stream.push_back(eval(args[0], caller_env_p));
+    stream.push_back(delay().call(vector< value > { args[1] }, caller_env_p));
+    return stream;
+  }
 
   value print::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
@@ -354,6 +385,8 @@ namespace lime {
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());
     env_p->set("elem", make_shared< elem >());
+    env_p->set("delay", make_shared< delay >());
+    env_p->set("cons-stream", make_shared< cons_stream >());
     env_p->set("print", make_shared< print >());
     env_p->set("read", make_shared< read >());
   }

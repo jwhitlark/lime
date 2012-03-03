@@ -25,13 +25,19 @@ namespace lime {
   string add_blanks(const string& code)
   {
     string new_code;
-    for (int i = 0; i < code.length(); ++i)
-      if (code[i] == '(')
+    bool string_expr = false;
+    for (char c: code)
+      if (c == '(' && !string_expr)
         new_code += " ( ";
-      else if (code[i] == ')')
+      else if (c == ')' && !string_expr)
         new_code += " ) ";
-      else
-        new_code.push_back(code[i]);
+      else if (c == ' ' && string_expr)
+        new_code += "\\s";
+      else {
+        if (c == '"')
+          string_expr = !string_expr;
+        new_code.push_back(c);
+      }
     return new_code;
   }
 
@@ -51,6 +57,10 @@ namespace lime {
     for (int i = 0; i < str.length() - 1; ++i)
       if (str[i] == '\\' && str[i + 1] == 'n') {
         unescaped.push_back('\n');
+        ++i;
+      }
+      else if (str[i] == '\\' && str[i + 1] == 's') {
+        unescaped.push_back(' ');
         ++i;
       }
       else
@@ -107,15 +117,18 @@ namespace lime {
       int paren_count = 0;
       bool empty = true;
       bool list_expr = false;
+      bool string_expr = false;
       do {
         part += code[pos];
         if (code[pos] != ' ' && code[pos] != '\n' && code[pos] != '\t')
           empty = false;
-        if (code[pos] == '(') {
+        if (code[pos] == '"')
+          string_expr = !string_expr;
+        if (code[pos] == '(' && !string_expr) {
           ++paren_count;
           list_expr = true;
         }
-        else if (code[pos] == ')')
+        else if (code[pos] == ')' && !string_expr)
           --paren_count;
         ++pos;
       } while (paren_count > 0 || (!list_expr && pos < code.length() &&
@@ -129,10 +142,13 @@ namespace lime {
   bool paren_match(const string& code)
   {
     int paren_count = 0;
+    bool string_expr = false;
     for (char c: code)
-      if (c == '(')
+      if (c == '"')
+        string_expr = !string_expr;
+      else if (c == '(' && !string_expr)
         ++paren_count;
-      else if (c == ')') {
+      else if (c == ')' && !string_expr) {
         if (paren_count == 0)
           return false;
         --paren_count;
