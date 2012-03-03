@@ -13,6 +13,21 @@ namespace lime {
   using lime::lambda;
   using lime::value;
 
+  class quote : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class make_list : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class require : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class equals : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);

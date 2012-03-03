@@ -31,3 +31,27 @@
         (begin
           (f (head l))
           (for-each f (tail l))))))
+
+(define take
+  (lambda (l n)
+    (if (or (= n 0) (< (len l) n))
+        (quote ())
+        (cons (head l) (take (tail l) (- n 1))))))
+
+(define drop
+  (lambda (l n)
+    (if (null? l)
+        (quote ())
+        (if (= 0 n)
+            l
+            (drop (tail l) (- n 1))))))
+
+(define zip-with
+  (lambda (f l1 l2)
+    (if (or (null? l1) (null? l2))
+        (quote ())
+        (cons (f (head l1) (head l2))
+              (zip-with f (tail h1) (tail h2))))))
+
+(define zip
+  (partial3 zip-with list))

@@ -25,6 +25,43 @@ namespace lime {
   using lime::parse;
   using lime::print_stream;
 
+  value quote::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'quote' (must be 1).");
+    return args.front();
+  }
+
+  value make_list::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    list lst;
+    for (value arg: args)
+      lst.push_back(eval(arg, caller_env_p));
+    return lst;
+  }  
+
+  class require_visitor : public static_visitor<> {
+  public:
+    require_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    void operator()(const string& path) const
+    {
+      load_file(path, env_p);
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "argument to 'require' must be a string.");
+    }
+  private:
+    shared_ptr< environment > env_p;
+  };
+
+  value require::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'require' (must be 1).");
+    apply_visitor(require_visitor(caller_env_p), args.front());
+    return nil();
+  }
+
   class equals_visitor : public static_visitor< bool > {
   public:
     bool operator()(int a, int b) const
@@ -372,6 +409,9 @@ namespace lime {
     env_p->set("nil", nil());
     env_p->set("true", true);
     env_p->set("false", false);
+    env_p->set("quote", make_shared< quote >());
+    env_p->set("list", make_shared< make_list >());
+    env_p->set("require", make_shared< require >());
     env_p->set("=", make_shared< equals >());
     env_p->set("<", make_shared< less_than >());
     env_p->set("+", make_shared< plus >());

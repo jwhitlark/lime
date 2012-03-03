@@ -47,7 +47,7 @@ namespace lime {
     deque< string > tokens;
     copy(istream_iterator< string >(iss),
          istream_iterator< string >(),
-         back_inserter< deque< string > >(tokens));
+         back_inserter(tokens));
     return tokens;
   }
 
