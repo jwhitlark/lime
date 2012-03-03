@@ -52,12 +52,15 @@ Builtin functions:
 - `nil`, `true`, `false` (trivial constructors)
 - `=` (works with int, string, bool)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
-- `null?` (whether a list is empty or not)
+- `atom?` (true if the argument is anything but a list)
+- `null?` (false if the argument is anything but the empty list)
 
     ```
     lime> (null? (quote ()))
     true
     lime> (null? (quote (1 2 3)))
+    false
+    lime> (null? 3)
     false
     ```
   
@@ -117,9 +120,12 @@ From `numeric.lm`:
 
 - `square`, `pow`, `fact`
 
+From `logic.lm`:
+
+- `not`, `and`, `or`, `xor`
+
 From `functional.lm`:
 
-- `not` (negate a boolean value)
 - `compose` (compose two functions)
 
     ```

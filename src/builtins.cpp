@@ -187,6 +187,26 @@ namespace lime {
     return apply_visitor(modulo_visitor(), arg1, arg2);
   }
 
+  class is_atom_visitor : public static_visitor< bool > {
+  public:
+    bool operator()(const list& lst) const
+    {
+      return false;
+    }
+    template< typename T >
+    bool operator()(const T& t) const
+    {
+      return true;
+    }
+  };
+
+  value is_atom::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'atom?' (must be 1).");
+    value arg = eval(args.front(), caller_env_p);
+    return apply_visitor(is_atom_visitor(), arg);
+  }
+
   class is_null_visitor : public static_visitor< bool > {
   public:
     bool operator()(const list& lst) const
@@ -196,7 +216,7 @@ namespace lime {
     template< typename T >
     bool operator()(const T& t) const
     {
-      check(false, "argument to 'null?' must be a list.");
+      return false;
     }
   };
 
@@ -298,6 +318,7 @@ namespace lime {
     env_p->set("*", make_shared< times >());
     env_p->set("/", make_shared< divide >());
     env_p->set("%", make_shared< modulo >());
+    env_p->set("atom?", make_shared< is_atom >());
     env_p->set("null?", make_shared< is_null >());
     env_p->set("cons", make_shared< cons >());
     env_p->set("head", make_shared< head >());

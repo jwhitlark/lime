@@ -1,9 +1,3 @@
-(define not
-  (lambda (b)
-    (if (= b true)
-      false
-      true)))
-
 (define compose
   (lambda (f g)
     (lambda (x) (f (g x)))))

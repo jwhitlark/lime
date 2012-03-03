@@ -48,6 +48,11 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
+  class is_atom : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class is_null : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);

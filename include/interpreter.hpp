@@ -22,6 +22,7 @@ namespace lime {
   const vector< string > stdlibs { "io.lm",
                                    "functional.lm",
                                    "list.lm",
+                                   "logic.lm",
                                    "numeric.lm" };
 
   void check(bool test, const string& error_msg);
