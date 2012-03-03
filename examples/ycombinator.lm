@@ -1,0 +1,26 @@
+(define Y
+  (lambda (f)
+    ((lambda (g)
+       (f (lambda (x) ((g g) x))))
+       (lambda (g)
+         (f (lambda (x) ((g g) x)))))))
+
+(define M
+  (lambda (f)
+    (lambda (l)
+      (if (null? l)
+          (quote ())
+          (if (null? (tail l))
+              (head l)
+              (max (head l) (f (tail l))))))))
+
+(define max-list2 (Y M))
+
+(define F
+  (lambda (f)
+    (lambda (n)
+      (if (= 0 n)
+          1
+          (* n (f (- n 1)))))))
+
+(define fact2 (Y F))
