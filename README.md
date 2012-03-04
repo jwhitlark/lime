@@ -61,6 +61,8 @@ Builtin functions:
 
 `(quote ())` and `(list)` are equivalent ways to build an empty list.
 
+- `empty` (a short-hand for the empty list)
+
 - `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
     ```
@@ -71,21 +73,19 @@ Builtin functions:
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
 - `and`, `or` (short-circuited logical operators)
 - `atom?` (true if the argument is anything but a list)
-- `null?` (false if the argument is anything but the empty list)
+- `empty?` (false if the argument is anything but the empty list)
 
     ```
-    lime> (null? (quote ()))
+    lime> (empty? empty)
     true
-    lime> (null? (quote (1 2 3)))
-    false
-    lime> (null? 3)
+    lime> (empty? (list 1 2 3))
     false
     ```
   
 - `cons` (construct a new list by appending an element on the front)
 
     ```
-    lime> (cons 1 (quote (2 3)))
+    lime> (cons 1 (list 2 3))
     (1 2 3)
     ```
 
@@ -94,7 +94,7 @@ Builtin functions:
 - `elem` (return a particular element of a list)
 
     ```
-    lime> (elem (quote (6 2 5 2 8)) 3)
+    lime> (elem (list 6 2 5 2 8) 3)
     5
     ```
 
@@ -179,7 +179,7 @@ From `numeric.lm`:
 - `sum`, `product` (sum/multiply the values in a list of integers)
 
     ```
-    lime> (sum (quote (1 2 3)))
+    lime> (sum (list 1 2 3))
     6
     ```
 
@@ -238,7 +238,7 @@ From `list.lm`:
 - `map`, `filter`, `fold` (usual higher-order functions)
 
     ```
-    lime> (map (lambda (x) (* x 2)) (quote (1 3 5)))
+    lime> (map (lambda (x) (* x 2)) (list 1 3 5))
     (2 6 10)
     lime> (filter odd (range 1 10))
     (1 3 5 7 9)

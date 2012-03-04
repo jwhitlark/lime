@@ -68,7 +68,7 @@
 (define range
   (lambda (a b)
     (if (> a b)
-        (quote ())
+        empty
         (cons a (range (+ 1 a) b)))))
 
 (define range-stream

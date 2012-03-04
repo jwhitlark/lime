@@ -1,13 +1,15 @@
+(define empty (quote ()))
+
 (define len
   (lambda (l)
-    (if (null? l)
+    (if (empty? l)
         0
         (+ 1 (len (tail l))))))
 
 (define init
   (lambda (l)
     (if (= 1 (len l))
-        (quote ())
+        empty
         (cons (head l) (init (tail l))))))
 
 (define last
@@ -18,27 +20,27 @@
 
 (define map
   (lambda (f l)
-    (if (null? l)
-        (quote ())
+    (if (empty? l)
+        empty
         (cons (f (head l)) (map f (tail l))))))
 
 (define filter
   (lambda (p l)
-    (if (null? l)
-        (quote ())
+    (if (empty? l)
+        empty
         (if (p (head l))
             (cons (head l) (filter p (tail l)))
             (filter p (tail l))))))
 
 (define fold
   (lambda (f i l)
-    (if (null? l)
+    (if (empty? l)
         i
         (fold f (f i (head l)) (tail l)))))
 
 (define for-each
   (lambda (f l)
-    (if (null? l)
+    (if (empty? l)
         nil
         (begin
           (f (head l))
@@ -47,35 +49,35 @@
 (define take
   (lambda (l n)
     (if (= n 0)
-        (quote ())
+        empty
         (cons (head l) (take (tail l) (- n 1))))))
 
 (define drop
   (lambda (l n)
-    (if (null? l)
-        (quote ())
+    (if (empty? l)
+        empty
         (if (= 0 n)
             l
             (drop (tail l) (- n 1))))))
 
 (define take-while
   (lambda (l p)
-    (if (or (null? l) (not (p (head l))))
-        (quote ())
+    (if (or (empty? l) (not (p (head l))))
+        empty
         (cons (head l) (take-while (tail l) p)))))
 
 (define drop-while
   (lambda (l p)
-    (if (null? l)
-        (quote ())
+    (if (empty? l)
+        empty
         (if (p (head l))
             (drop-while (tail l) p)
             l))))    
 
 (define zip-with
   (lambda (f l1 l2)
-    (if (or (null? l1) (null? l2))
-        (quote ())
+    (if (or (empty? l1) (empty? l2))
+        empty
         (cons (f (head l1) (head l2))
               (zip-with f (tail l1) (tail l2))))))
 

@@ -437,7 +437,7 @@ namespace lime {
     return apply_visitor(is_atom_visitor(), arg);
   }
 
-  class is_null_visitor : public static_visitor< bool > {
+  class is_empty_visitor : public static_visitor< bool > {
   public:
     bool operator()(const list& lst) const
     {
@@ -450,11 +450,11 @@ namespace lime {
     }
   };
 
-  value is_null::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  value is_empty::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'null?' (must be 1).");
     value arg = eval(args.front(), caller_env_p);
-    return apply_visitor(is_null_visitor(), arg);
+    return apply_visitor(is_empty_visitor(), arg);
   }
 
   class cons_visitor : public static_visitor< list > {
@@ -656,7 +656,7 @@ namespace lime {
     env_p->set("and", make_shared< logical_and >());
     env_p->set("or", make_shared< logical_or >());
     env_p->set("atom?", make_shared< is_atom >());
-    env_p->set("null?", make_shared< is_null >());
+    env_p->set("empty?", make_shared< is_empty >());
     env_p->set("cons", make_shared< cons >());
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());
