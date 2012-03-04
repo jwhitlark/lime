@@ -87,6 +87,20 @@
             s
             (drop-stream (tail-stream s) (- n 1))))))
 
+(define take-while-stream
+  (lambda (s p)
+    (if (or (empty-stream? s) (not (p (head-stream s))))
+        empty-stream
+        (cons-stream (head-stream s) (take-while-stream (tail-stream s) p)))))
+
+(define drop-while-stream
+  (lambda (s p)
+    (if (empty-stream? s)
+        empty-stream
+        (if (p (head-stream s))
+            (drop-while-stream (tail-stream s) p)
+            l))))    
+
 (define zip-with-stream
   (lambda (f s1 s2)
     (if (or (empty-stream? s1) (empty-stream? s2))

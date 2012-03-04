@@ -273,6 +273,13 @@ From `list.lm`:
     (6 7 8 9 10)
     ```
 
+- `take-while`, `drop-while`
+
+    ```
+    lime> (take-while odd (list 7 9 11 4 6 7 5))
+    (7 9 11)
+    ```
+
 - `zip`, `zip-with` (usual higher-order functions)
 
     ```
@@ -291,7 +298,7 @@ From `stream.lm`:
 - `len-stream`
 - `map-stream`, `filter-stream`, `fold-stream`
 - `for-each-stream`
-- `take-stream`, `drop-stream`
+- `take-stream`, `drop-stream`, `take-while-stream`, `drop-while-stream`
 - `zip-stream`, `zip-with-stream`
 - `repeat` (repeat the argument infinite times)
 
