@@ -63,6 +63,11 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
+  class random_int : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class logical_and : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);

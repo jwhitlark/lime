@@ -69,6 +69,7 @@ Builtin functions:
 
 - `=` (works with any builtin type, including lists)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
+- `random`, `rand-max` (`random` returns a pseudo-random integer between 0 and `rand-max` included)
 - `and`, `or` (short-circuited logical operators)
 - `atom?` (true if the argument is anything but a list)
 - `empty?` (false if the argument is anything but the empty list)

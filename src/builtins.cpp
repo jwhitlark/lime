@@ -1,3 +1,7 @@
+// C headers
+#include <cstdlib>
+#include <ctime>
+
 // STL headers
 #include <iostream>
 
@@ -344,6 +348,11 @@ namespace lime {
     return apply_visitor(modulo_visitor(), arg1, arg2);   
   }
 
+  value random_int::call(vector< value > args, shared_ptr< environment > caller_env_p)  
+  {
+    return rand();
+  }
+
   class bool_visitor : public static_visitor< bool > {
   public:
     bool operator()(bool a) const
@@ -653,6 +662,8 @@ namespace lime {
     env_p->set("*", make_shared< times >());
     env_p->set("/", make_shared< divide >());
     env_p->set("%", make_shared< modulo >());
+    env_p->set("random", make_shared< random_int >());
+    env_p->set("rand-max", RAND_MAX);
     env_p->set("and", make_shared< logical_and >());
     env_p->set("or", make_shared< logical_or >());
     env_p->set("atom?", make_shared< is_atom >());
@@ -665,6 +676,7 @@ namespace lime {
     env_p->set("cons-stream", make_shared< cons_stream >());
     env_p->set("print", make_shared< print >());
     env_p->set("read", make_shared< read >());
+    srand(time(nullptr));
   }
 
 } // namespace lime
