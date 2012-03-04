@@ -1,3 +1,7 @@
 (define compose
   (lambda (f g)
     (lambda (x) (f (g x)))))
+
+(define flip
+  (lambda (f)
+    (lambda (x y) (f y x))))

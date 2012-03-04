@@ -223,6 +223,14 @@ From `functional.lm`:
     7
     ```
 
+- `flip` (exchange the arguments of a two-argument function)
+
+It is particularly useful in the context of partial function application, when a two-argument operator is not commutative:
+
+    lime> (define divide-by-2 ((flip /) 2))
+    lime> (map divide-by-2 (list 2 4 6 8))
+    (1 2 3 4)
+
 From `list.lm`:
 
 - `len` (return the length of a list)
