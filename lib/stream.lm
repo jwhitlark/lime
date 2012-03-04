@@ -2,9 +2,9 @@
   (lambda (delayed)
     (delayed)))
 
-(define empty-stream (quote ()))
+(define empty-stream empty)
 
-(define empty-stream? null?)
+(define empty-stream? empty?)
 
 (define head-stream
   (lambda (s)

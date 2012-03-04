@@ -213,6 +213,13 @@ From `logic.lm`:
 
 From `functional.lm`:
 
+- `apply` (apply a function to an argument)
+
+    ```
+    lime> (zip-with apply (list even odd) (list 2 3))
+    (true true)
+    ```
+
 - `compose` (compose two functions)
 
     ```
