@@ -57,21 +57,13 @@
         (head-stream s)
         (min (head-stream s) (min-stream (tail-stream s))))))
 
-(define sum
-  (lambda (l)
-    (fold + 0 l)))
+(define sum (fold + 0))
 
-(define product
-  (lambda (l)
-    (fold * 1 l)))
+(define product (fold * 1))
 
-(define sum-stream
-  (lambda (s)
-    (fold-stream + 0 s)))
+(define sum-stream (fold-stream + 0))
 
-(define product-stream
-  (lambda (s)
-    (fold-stream * 1 s)))
+(define product-stream (fold-stream * 1))
 
 (define range
   (lambda (a b)
