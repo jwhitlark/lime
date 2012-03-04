@@ -207,9 +207,21 @@ From `functional.lm`:
     7
     ```
 
-- `partial2` TODO
+- `partial2` (partially apply a function of two arguments)
 
-- `partial3` TODO
+    ```
+    lime> (define times2 (partial2 * 2))
+    lime> (times2 5)
+    10
+    ```
+
+- `partial3` (partially apply a function of three arguments)
+
+    ```
+    lime> (define my-product (partial2 (partial3 fold *) 1))
+    lime> (my-product (list 3 4 5))
+    60
+    ```
 
 From `list.lm`:
 
@@ -235,9 +247,32 @@ From `list.lm`:
     3
     ```
 
-- `for-each` TODO
-- `take`, `drop` TODO
-- `zip`, `zip-with` TODO
+- `for-each` (call a given procedure for each element of a list)
+
+    ```
+    lime> (for-each println (list "hey" "hello" "world"))
+    hey
+    hello
+    world
+    ```
+
+- `take`, `drop` (take/drop the first n elements of a list)
+
+    ```
+    lime> (take (range 1 10) 5)
+    (1 2 3 4 5)
+    lime> (drop (range 1 10) 5)
+    (6 7 8 9 10)
+    ```
+
+- `zip`, `zip-with` (usual higher-order functions)
+
+    ```
+    lime> (zip (list 1 2 3) (list "a" "b" "c"))
+    ((1 a) (2 b) (3 c))
+    lime> (zip-with * (list 1 2 3) (list 3 2 1))
+    (3 4 3)
+    ```
 
 From `stream.lm`:
 
