@@ -231,7 +231,7 @@ namespace lime {
     return apply_visitor(minus_visitor(), arg1, arg2);   
   }
 
-  class times_visitor : public static_visitor< value > {
+  class times_visitor : public static_visitor< int > {
   public:
     int operator()(int a, int b) const
     {
@@ -268,7 +268,7 @@ namespace lime {
     return apply_visitor(times_visitor(), arg1, arg2);   
   }
 
-  class divide_visitor : public static_visitor< value > {
+  class divide_visitor : public static_visitor< int > {
   public:
     int operator()(int a, int b) const
     {
@@ -306,7 +306,7 @@ namespace lime {
     return apply_visitor(divide_visitor(), arg1, arg2);   
   }
 
-  class modulo_visitor : public static_visitor< value > {
+  class modulo_visitor : public static_visitor< int > {
   public:
     int operator()(int a, int b) const
     {
@@ -342,6 +342,79 @@ namespace lime {
       return make_shared< modulo_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
     return apply_visitor(modulo_visitor(), arg1, arg2);   
+  }
+
+  class bool_visitor : public static_visitor< bool > {
+  public:
+    bool operator()(bool a) const
+    {
+      return a;
+    }
+    template< typename T >
+    bool operator()(const T& a) const
+    {
+      check(false, "boolean value expected.");
+    }
+  };
+
+  class logical_and_partial : public lambda {
+  public:
+    logical_and_partial(value a1) : boolean1(apply_visitor(bool_visitor(), a1)) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to 'and <expr>' (must be 1).");
+      if (boolean1) {
+        value arg2 = eval(args.front(), caller_env_p);
+        return apply_visitor(bool_visitor(), arg2);
+      }
+      return false;
+    }
+  private:
+    bool boolean1;
+  };
+
+  value logical_and::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to 'and' (must be 1 or 2).");
+    value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< logical_and_partial >(arg1);
+    bool boolean1 = apply_visitor(bool_visitor(), arg1);
+    if (boolean1) {
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(bool_visitor(), arg2);
+    }
+    return false;
+  }
+
+  class logical_or_partial : public lambda {
+  public:
+    logical_or_partial(value a1) : boolean1(apply_visitor(bool_visitor(), a1)) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to 'and <expr>' (must be 1).");
+      if (boolean1)
+        return true;
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(bool_visitor(), arg2);
+    }
+  private:
+    bool boolean1;
+  };
+
+  value logical_or::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to 'and' (must be 1 or 2).");
+    value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< logical_or_partial >(arg1);
+    bool boolean1 = apply_visitor(bool_visitor(), arg1);
+      if (boolean1)
+        return true;
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(bool_visitor(), arg2);
   }
 
   class is_atom_visitor : public static_visitor< bool > {
@@ -580,6 +653,8 @@ namespace lime {
     env_p->set("*", make_shared< times >());
     env_p->set("/", make_shared< divide >());
     env_p->set("%", make_shared< modulo >());
+    env_p->set("and", make_shared< logical_and >());
+    env_p->set("or", make_shared< logical_or >());
     env_p->set("atom?", make_shared< is_atom >());
     env_p->set("null?", make_shared< is_null >());
     env_p->set("cons", make_shared< cons >());
