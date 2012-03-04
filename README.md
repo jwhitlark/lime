@@ -61,8 +61,6 @@ Builtin functions:
 
 `(quote ())` and `(list)` are equivalent ways to build an empty list.
 
-- `empty` (a short-hand for the empty list)
-
 - `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
     ```
@@ -234,6 +232,8 @@ It is particularly useful in the context of partial function application, when a
 
 From `list.lm`:
 
+- `empty` (a short-hand for the empty list)
+- `list?` (true if and only if the argument is a list)
 - `len` (return the length of a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
