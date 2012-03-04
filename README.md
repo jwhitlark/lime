@@ -205,22 +205,6 @@ From `functional.lm`:
     7
     ```
 
-- `partial2` (partially apply a function of two arguments)
-
-    ```
-    lime> (define times2 (partial2 * 2))
-    lime> (times2 5)
-    10
-    ```
-
-- `partial3` (partially apply a function of three arguments)
-
-    ```
-    lime> (define my-product (partial2 (partial3 fold *) 1))
-    lime> (my-product (list 3 4 5))
-    60
-    ```
-
 From `list.lm`:
 
 - `len` (return the length of a list)

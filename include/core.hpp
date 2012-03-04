@@ -74,6 +74,7 @@ namespace lime {
     lambda(vector< symbol > pars, value x, shared_ptr< environment > e) : 
       expr(x), creation_env_p(e), params(pars) {}
     virtual value call(vector< value > args, shared_ptr< environment > caller_env_p);
+    shared_ptr< lambda > partial(int n_supplied_args, shared_ptr< environment > env_p);
   private:
     vector< symbol > params;
     value expr;

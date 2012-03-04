@@ -94,8 +94,7 @@
         (cons-stream (f (head-stream s1) (head-stream s2))
               (zip-with-stream f (tail-stream s1) (tail-stream s2))))))
 
-(define zip-stream
-  (partial3 zip-with-stream list))
+(define zip-stream (zip-with-stream list))
 
 (define repeat
   (lambda (x)

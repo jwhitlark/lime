@@ -65,5 +65,4 @@
         (cons (f (head l1) (head l2))
               (zip-with f (tail l1) (tail l2))))))
 
-(define zip
-  (partial3 zip-with list))
+(define zip (zip-with list))

@@ -96,10 +96,26 @@ namespace lime {
     }
   };
 
+  class equals_partial : public lambda {
+  public:
+    equals_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '= <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(equals_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value equals::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '=' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '=' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< equals_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
     return apply_visitor(equals_visitor(), arg1, arg2);
   }
@@ -117,10 +133,26 @@ namespace lime {
     }
   };
 
+  class less_than_partial : public lambda {
+  public:
+    less_than_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '< <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(less_than_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value less_than::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '<' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '<' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< less_than_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
     return apply_visitor(less_than_visitor(), arg1, arg2);
   }
@@ -138,12 +170,28 @@ namespace lime {
     }
   };
 
+  class plus_partial : public lambda {
+  public:
+    plus_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '+ <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(plus_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value plus::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '+' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '+' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< plus_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(plus_visitor(), arg1, arg2);
+    return apply_visitor(plus_visitor(), arg1, arg2);   
   }
 
   class minus_visitor : public static_visitor< int > {
@@ -159,12 +207,28 @@ namespace lime {
     }
   };
 
+  class minus_partial : public lambda {
+  public:
+    minus_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '- <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(minus_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value minus::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '-' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '-' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< minus_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(minus_visitor(), arg1, arg2);
+    return apply_visitor(minus_visitor(), arg1, arg2);   
   }
 
   class times_visitor : public static_visitor< value > {
@@ -180,12 +244,28 @@ namespace lime {
     }
   };
 
+  class times_partial : public lambda {
+  public:
+    times_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '* <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(times_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value times::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '*' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '*' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< times_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(times_visitor(), arg1, arg2);
+    return apply_visitor(times_visitor(), arg1, arg2);   
   }
 
   class divide_visitor : public static_visitor< value > {
@@ -202,12 +282,28 @@ namespace lime {
     }
   };
 
+  class divide_partial : public lambda {
+  public:
+    divide_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '/ <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(divide_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value divide::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '/' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '/' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< divide_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(divide_visitor(), arg1, arg2);
+    return apply_visitor(divide_visitor(), arg1, arg2);   
   }
 
   class modulo_visitor : public static_visitor< value > {
@@ -224,12 +320,28 @@ namespace lime {
     }
   };
 
+  class modulo_partial : public lambda {
+  public:
+    modulo_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to '% <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(modulo_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value modulo::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to '%' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to '%' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< modulo_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(modulo_visitor(), arg1, arg2);
+    return apply_visitor(modulo_visitor(), arg1, arg2);   
   }
 
   class is_atom_visitor : public static_visitor< bool > {
@@ -286,12 +398,28 @@ namespace lime {
     }
   };
 
+  class cons_partial : public lambda {
+  public:
+    cons_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to 'cons <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(cons_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value cons::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to 'cons' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to 'cons' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< cons_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(cons_visitor(), arg1, arg2);
+    return apply_visitor(cons_visitor(), arg1, arg2);   
   }
 
   class head_visitor : public static_visitor< value > {
@@ -349,13 +477,29 @@ namespace lime {
       check(false, "arguments to 'elem' must be a non-empty list and an integer.");
     }
   };
-  
+
+  class elem_partial : public lambda {
+  public:
+    elem_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to 'elem <expr>' (must be 1).");
+      value arg2 = eval(args.front(), caller_env_p);
+      return apply_visitor(elem_visitor(), arg1, arg2);
+    }
+  private:
+    value arg1;
+  };
+
   value elem::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to 'elem' (must be 2).");
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to 'elem' (must be 1 or 2).");
     value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< elem_partial >(arg1);
     value arg2 = eval(args[1], caller_env_p);
-    return apply_visitor(elem_visitor(), arg1, arg2);
+    return apply_visitor(elem_visitor(), arg1, arg2);   
   }
   
   class memoized_proc : public lambda {
@@ -380,12 +524,29 @@ namespace lime {
     return make_shared< memoized_proc >(args[0], caller_env_p);
   }
 
+  class cons_stream_partial : public lambda {
+  public:
+    cons_stream_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, "wrong number of arguments to 'cons-stream <expr>' (must be 1).");
+      value arg2 = delay().call(vector< value > { args[0] }, caller_env_p);
+      list stream(deque< value > { arg1, arg2 });
+      return stream;
+    }
+  private:
+    value arg1;
+  };
+
   value cons_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 2, "wrong number of arguments to 'cons-stream' (must be 2).");
-    list stream;
-    stream.push_back(eval(args[0], caller_env_p));
-    stream.push_back(delay().call(vector< value > { args[1] }, caller_env_p));
+    check(args.size() == 1 || args.size() == 2, 
+          "wrong number of arguments to 'cons-stream' (must be 1 or 2).");
+    value arg1 = eval(args[0], caller_env_p);
+    if (args.size() == 1)
+      return make_shared< cons_stream_partial >(arg1);
+    value arg2 = delay().call(vector< value > { args[1] }, caller_env_p);
+    list stream(deque< value > { arg1, arg2 });
     return stream;
   }
 

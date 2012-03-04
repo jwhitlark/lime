@@ -31,11 +31,20 @@ namespace lime {
 
   value lambda::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == params.size(), "wrong number of arguments in lambda.");
+    check(args.size() <= params.size(), "too many arguments to lambda.");
+    check(args.size() > 0 || params.size() == 0, "lambda called without arguments.");
     auto local_env_p = nested_environment(creation_env_p);
-    for (int i = 0; i < params.size(); ++i)
+    for (int i = 0; i < args.size(); ++i)
       local_env_p->set(params[i], eval(args[i], caller_env_p));
+    if (args.size() < params.size())
+      return partial(args.size(), local_env_p);
     return eval(expr, local_env_p);
+  }
+
+  shared_ptr< lambda > lambda::partial(int n_supplied_args, shared_ptr< environment > env_p)
+  {
+    vector< symbol > pars(begin(params) + n_supplied_args, end(params));
+    return make_shared< lambda >(pars, expr, env_p);
   }
 
   class output_visitor : public static_visitor<> {
