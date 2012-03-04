@@ -84,3 +84,11 @@
               (zip-with f (tail l1) (tail l2))))))
 
 (define zip (zip-with list))
+
+(define count
+  (lambda (l x) 
+    (len (filter (= x) l))))
+
+(define count-if
+  (lambda (l p)
+    (len (filter p l))))

@@ -298,6 +298,15 @@ From `list.lm`:
     (3 4 3)
     ```
 
+- `count`, `count-if`
+
+    ```
+    lime> (count (list 1 2 3 2 4 2) 2)
+    3
+    lime> (count-if (range 1 10) even)
+    5
+    ```
+
 From `stream.lm`:
 
 - `empty-stream`
