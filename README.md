@@ -120,13 +120,11 @@ The language also provides lazy-evaluated, memoized streams as an alternative to
 
 For example, this is how we build an infinite stream of ones:
 
-    ```
     lime> (define ones (cons-stream 1 ones))
     lime> (elem-stream ones 3)
     1
     lime> (elem-stream ones 45)
     1
-    ```
 
 All the remaining functionality is provided in the standard library, as we shall see.
 
