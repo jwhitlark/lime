@@ -114,6 +114,24 @@ User input is treated as code:
     lime> (foo 2)
     3
 
+Partial function application is also a possibility. The following two definitions are equivalent:
+
+    lime> (define succ1 (lambda (n) (+ 1 n)))
+    lime> (define succ2 (+ 1))
+    lime> (succ1 4)
+    5
+    lime> (succ2 4)
+    5
+
+This applies to functions of any number of arguments:
+
+   lime> (define sum1 (fold +))
+   lime> (sum1 0 (list 1 2 3))
+   6
+   lime> (define sum2 (fold + 0))
+   lime> (sum2 (list 1 2 3))
+   6
+
 The language also provides lazy-evaluated, memoized streams as an alternative to lists:
 
 - `cons-stream` (construct a stream from an element and a tail stream)
