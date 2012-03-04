@@ -69,6 +69,7 @@ Builtin functions:
 
 - `=` (works with any builtin type, including lists)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
+- `and`, `or` (short-circuited logical operators)
 - `atom?` (true if the argument is anything but a list)
 - `null?` (false if the argument is anything but the empty list)
 
@@ -210,7 +211,7 @@ From `numeric.lm`:
 
 From `logic.lm`:
 
-- `not`, `and`, `or`, `xor`
+- `not`, `xor`
 
 From `functional.lm`:
 
