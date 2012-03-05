@@ -1,120 +1,101 @@
-(define force
-  (lambda (delayed)
-    (delayed)))
+(define (force delayed)
+  (delayed))
 
 (define empty-stream empty)
 
 (define (empty-stream? s)
   (and (list? s) (empty? s)))
 
-(define head-stream
-  (lambda (s)
-    (elem 1 s)))
+(define (head-stream s)
+  (elem 1 s))
 
-(define tail-stream
-  (lambda (s)
-    (force (elem 2 s))))
+(define (tail-stream s)
+  (force (elem 2 s)))
 
-(define elem-stream
-  (lambda (i s)
-    (if (= i 1)
-        (head-stream s)
-        (elem-stream (- i 1) (tail-stream s)))))
+(define (elem-stream i s)
+  (if (= i 1)
+      (head-stream s)
+      (elem-stream (- i 1) (tail-stream s))))
 
-(define eq-stream
-  (lambda (s1 s2)
-    (if (empty-stream? s1)
-        (empty-stream? s2)
-        (and (= (head-stream s1) (head-stream s2))
-             (eq-stream (tail-stream s1) (tail-stream s2))))))
+(define (eq-stream s1 s2)
+  (if (empty-stream? s1)
+      (empty-stream? s2)
+      (and (= (head-stream s1) (head-stream s2))
+           (eq-stream (tail-stream s1) (tail-stream s2)))))
 
-(define len-stream
-  (lambda (s)
-    (if (empty-stream? s)
-        0
-        (+ 1 (len-stream (tail-stream s))))))
+(define (len-stream s)
+  (if (empty-stream? s)
+      0
+      (+ 1 (len-stream (tail-stream s)))))
 
-(define init-stream
-  (lambda (s)
-    (if (= 1 (len-stream s))
-        empty-stream
-        (cons-stream (head-stream s) (init-stream (tail-stream s))))))
+(define (init-stream s)
+  (if (= 1 (len-stream s))
+      empty-stream
+      (cons-stream (head-stream s) (init-stream (tail-stream s)))))
 
-(define last-stream
-  (lambda (s)
-    (if (= 1 (len-stream s))
-        (head-stream s)
-        (last-stream (tail-stream s)))))
+(define (last-stream s)
+  (if (= 1 (len-stream s))
+      (head-stream s)
+      (last-stream (tail-stream s))))
 
-(define map-stream
-  (lambda (f s)
-    (if (empty-stream? s)
-        empty-stream
-        (cons-stream (f (head s)) (map-stream f (tail-stream s))))))
+(define (map-stream f s)
+  (if (empty-stream? s)
+      empty-stream
+      (cons-stream (f (head s)) (map-stream f (tail-stream s)))))
 
-(define filter-stream
-  (lambda (p s)
-    (if (empty-stream? s)
-        empty-stream
-        (if (p (head-stream s))
-            (cons-stream (head s) (filter-stream p (tail-stream s)))
-            (filter-stream p (tail-stream s))))))
+(define (filter-stream p s)
+  (if (empty-stream? s)
+      empty-stream
+      (if (p (head-stream s))
+          (cons-stream (head s) (filter-stream p (tail-stream s)))
+          (filter-stream p (tail-stream s)))))
 
-(define fold-stream
-  (lambda (f i s)
-    (if (empty-stream? s)
-        i
-        (fold-stream f (f i (head-stream s)) (tail-stream s)))))
+(define (fold-stream f i s)
+  (if (empty-stream? s)
+      i
+      (fold-stream f (f i (head-stream s)) (tail-stream s))))
 
-(define for-each-stream
-  (lambda (f s)
-    (if (empty-stream? s)
-        nil
-        (begin
-          (f (head-stream s))
-          (for-each-stream f (tail-stream s))))))
+(define (for-each-stream f s)
+  (if (empty-stream? s)
+      nil
+      (begin
+        (f (head-stream s))
+        (for-each-stream f (tail-stream s)))))
 
-(define take-stream
-  (lambda (n s)
-    (if (= n 0)
-        empty-stream
-        (cons-stream (head-stream s) (take-stream (- n 1) (tail-stream s))))))
+(define (take-stream n s)
+  (if (= n 0)
+      empty-stream
+      (cons-stream (head-stream s) (take-stream (- n 1) (tail-stream s)))))
 
-(define drop-stream
-  (lambda (n s)
-    (if (empty-stream? s)
-        s
-        (if (= 0 n)
-            s
-            (drop-stream (- n 1) (tail-stream s))))))
+(define (drop-stream n s)
+  (if (empty-stream? s)
+      s
+      (if (= 0 n)
+          s
+          (drop-stream (- n 1) (tail-stream s)))))
 
-(define take-while-stream
-  (lambda (p s)
-    (if (or (empty-stream? s) (not (p (head-stream s))))
-        empty-stream
-        (cons-stream (head-stream s) (take-while-stream p (tail-stream s))))))
+(define (take-while-stream p s)
+  (if (or (empty-stream? s) (not (p (head-stream s))))
+      empty-stream
+      (cons-stream (head-stream s) (take-while-stream p (tail-stream s)))))
 
-(define drop-while-stream
-  (lambda (p s)
-    (if (empty-stream? s)
-        empty-stream
-        (if (p (head-stream s))
-            (drop-while-stream p (tail-stream s))
-            l))))    
+(define (drop-while-stream p s)
+  (if (empty-stream? s)
+      empty-stream
+      (if (p (head-stream s))
+          (drop-while-stream p (tail-stream s))
+          l)))
 
-(define zip-with-stream
-  (lambda (f s1 s2)
-    (if (or (empty-stream? s1) (empty-stream? s2))
-        empty-stream
-        (cons-stream (f (head-stream s1) (head-stream s2))
-              (zip-with-stream f (tail-stream s1) (tail-stream s2))))))
+(define (zip-with-stream f s1 s2)
+  (if (or (empty-stream? s1) (empty-stream? s2))
+      empty-stream
+      (cons-stream (f (head-stream s1) (head-stream s2))
+                   (zip-with-stream f (tail-stream s1) (tail-stream s2)))))
 
 (define zip-stream (zip-with-stream list))
 
-(define repeat
-  (lambda (x)
-    (cons-stream x (repeat x))))
+(define (repeat x)
+  (cons-stream x (repeat x)))
 
-(define enum-with
-  (lambda (f i)
-    (cons-stream i (enum-with f (f i)))))
+(define (enum-with f i)
+  (cons-stream i (enum-with f (f i))))
