@@ -184,12 +184,12 @@ Partial function application is also a possibility. The following two definition
 
 This applies to functions of any number of arguments:
 
-   lime> (define sum1 (fold +))
-   lime> (sum1 0 (list 1 2 3))
-   6
-   lime> (define sum2 (fold + 0))
-   lime> (sum2 (list 1 2 3))
-   6
+    lime> (define sum1 (fold +))
+    lime> (sum1 0 (list 1 2 3))
+    6
+    lime> (define sum2 (fold + 0))
+    lime> (sum2 (list 1 2 3))
+    6
 
 The language also provides lazy-evaluated, memoized streams as an alternative to lists:
 
