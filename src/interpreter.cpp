@@ -27,9 +27,9 @@ namespace lime {
 
   // lime
   using lime::eval;
+  using lime::output;
   using lime::paren_match;
   using lime::parse;
-  using lime::print_stream;
   using lime::split;
 
   void check(bool test, const string& error_msg)
@@ -67,7 +67,7 @@ namespace lime {
     template< typename T >
     void operator()(const T& t) const
     {
-      print_stream(cout, t);
+      output(cout, t);
       cout << endl;
     }
   };

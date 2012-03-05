@@ -82,7 +82,7 @@ namespace lime {
   };
 
   ostream& operator<<(ostream& out_stream, const value& val);
-  ostream& print_stream(ostream& out_stream, const value& val);
+  ostream& output(ostream& out_stream, const value& val);
 
   class environment {
   public:

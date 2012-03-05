@@ -18,6 +18,11 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
+  class evaluate : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class make_list : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
@@ -122,8 +127,28 @@ namespace lime {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
-  
+
+  class print_string : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+ 
+  class print_to_string : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class read : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class read_string : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class read_from_string : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };

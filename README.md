@@ -29,12 +29,13 @@ Basic syntax:
 - `(begin expr1 expr2 ...)` (execute several expressions sequentially, in a nested environment; the last expression determines the return value of the whole block)
 - `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
 - `(lambda (params) expr)` (create an anonymous function)
+- `true`, `false`
+- `nil` (nothing; nada; nichts)
 
 Supported variable types: int, string, bool, lambda, list, nil
 
 Builtin functions:
 
-- `nil`, `true`, `false` (trivial constructors)
 - `list` (create a list with the arguments as elements)
 
     ```
@@ -57,9 +58,20 @@ Builtin functions:
     lime> (define x 42)
     lime> (quote x)
     x
+    lime> (quote (+ y 5))
+    (+ y 5)
     ```
 
 `(quote ())` and `(list)` are equivalent ways to build an empty list.
+
+- `eval` (evaluate an expression)
+
+   ```
+   lime> (define foo (quote (+ x 6)))
+   lime> (define x 3)
+   lime> (eval foo)
+   9
+   ```
 
 - `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
@@ -98,6 +110,30 @@ Builtin functions:
     ```
 
 - `print` (print the argument's value, without a newline)
+
+    ```
+    lime> (print 4)
+    4lime> (print "hello")
+    "hello"lime>
+    ```
+
+- `print-string` (print a string with correct formatting)
+
+    ```
+    lime> (print-string "hey!\nhello world\n")
+    hey!
+    hello world
+    lime>
+    ```
+
+- `print-to-string` (return a string representation of the argument)
+
+   ```
+   lime> (print-to-string 4)
+   "4"lime> (print-to-string "hello")
+   ""hello""lime>
+   ```
+
 - `read` (read an expression from standard input)
 
     ```
@@ -105,14 +141,35 @@ Builtin functions:
     5
     lime> x
     5
+    lime> (read)
+    "hello world"
+    "hello world"
     ```
 
-User input is treated as code:
+User input to `read` is treated as code:
 
     lime> (define foo (read))
     (lambda (x) (+ x 1))
     lime> (foo 2)
     3
+
+- `read-string` (read a string from standard input)
+
+    ```
+    lime> (read-string)
+    ciao
+    "ciao"
+    ```
+
+- `read-from-string` (convert a string to an expression, i.e. parse it)
+
+    ```
+    lime> (read-from-string "(* 5 2)")
+    10
+    lime> (read-from-string "(define succ (+ 1))")
+    lime> (succ 3)
+    4
+    ```
 
 Partial function application is also a possibility. The following two definitions are equivalent:
 
@@ -151,6 +208,7 @@ Library functions:
 From `io.lm`:
 
 - `println` (print the argument and append a newline)
+- `println-string`
 
 - `print-stream`, `println-stream` (evaluate and print all elements of a non-infinite stream)
 
@@ -267,7 +325,7 @@ From `list.lm`:
 - `for-each` (call a given procedure for each element of a list)
 
     ```
-    lime> (for-each println (list "hey" "hello" "world"))
+    lime> (for-each println-string (list "hey" "hello" "world"))
     hey
     hello
     world

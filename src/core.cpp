@@ -5,6 +5,7 @@
 #include <core.hpp>
 #include <eval.hpp>
 #include <interpreter.hpp>
+#include <parse.hpp>
 
 namespace lime {
   // STL
@@ -17,6 +18,7 @@ namespace lime {
 
   // lime
   using lime::check;
+  using lime::escape;
   using lime::eval;
 
   value list::head() const
@@ -56,7 +58,7 @@ namespace lime {
     }
     void operator()(const string& s) const
     {
-      out_stream << s;
+      out_stream << '"' << escape(s) << '"';
     }
     void operator()(bool b) const
     {
@@ -89,10 +91,10 @@ namespace lime {
 
   ostream& operator<<(ostream& out_stream, const value& val)
   {
-    print_stream(out_stream, val);
+    output(out_stream, val);
   }
 
-  ostream& print_stream(ostream& out_stream, const value& val)
+  ostream& output(ostream& out_stream, const value& val)
   {
     apply_visitor(output_visitor(out_stream), val);
     return out_stream;

@@ -4,6 +4,7 @@
 
 // STL headers
 #include <iostream>
+#include <sstream>
 
 // lime headers
 #include <builtins.hpp>
@@ -16,6 +17,7 @@ namespace lime {
   using std::cin;
   using std::cout;
   using std::getline;
+  using std::stringstream;
   using std::make_shared;
 
   // Boost
@@ -24,15 +26,23 @@ namespace lime {
 
   // lime
   using lime::check;
+  using lime::escape;
   using lime::eval;
   using lime::nil;
+  using lime::output;
   using lime::parse;
-  using lime::print_stream;
+  using lime::unescape;
 
   value quote::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'quote' (must be 1).");
     return args.front();
+  }
+
+  value evaluate::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'eval' (must be 1).");
+    return eval(eval(args.front(), caller_env_p), caller_env_p);
   }
 
   value make_list::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -635,16 +645,76 @@ namespace lime {
   value print::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'print' (must be 1).");
-    print_stream(cout, eval(args[0], caller_env_p));
+    output(cout, eval(args[0], caller_env_p));
     return nil();
   }
 
+  class print_string_visitor : public static_visitor<> {
+  public:
+    void operator()(const string& str) const
+    {
+      cout << unescape(str);
+    }
+    template< typename T>
+    void operator()(const T& t) const
+    {
+      check(false, "argument to 'print-string' must be a string.");
+    }
+  };
+
+  value print_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'print-string' (must be 1).");
+    value arg1 = eval(args.front(), caller_env_p);
+    apply_visitor(print_string_visitor(), arg1);
+    return nil();
+  }
+
+  value print_to_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'print-to-string' (must be 1).");
+    stringstream iss;
+    output(iss, eval(args[0], caller_env_p));
+    return iss.str();
+  }
+  
   value read::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.empty(), "'read' takes no arguments.");
     string input;
     getline(cin, input);
     return eval(parse(input), caller_env_p);
+  } 
+  
+  value read_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.empty(), "'read-string' takes no arguments.");
+    string input;
+    getline(cin, input);
+    return escape(input);
+  }
+
+  class read_from_string_visitor : public static_visitor< value > {
+  public:
+    read_from_string_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    value operator()(const string& str) const
+    {
+      return eval(parse(str), env_p);
+    }
+    template< typename T>
+    value operator()(const T& t) const
+    {
+      check(false, "argument to 'read-from-string' must be a string.");
+    }
+  private:
+    shared_ptr< environment > env_p;
+  };
+
+  value read_from_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'read-from-string' (must be 1).");
+    value arg1 = eval(args.front(), caller_env_p);
+    return apply_visitor(read_from_string_visitor(caller_env_p), arg1);
   }
 
   void add_builtins(shared_ptr< environment > env_p)
@@ -653,6 +723,7 @@ namespace lime {
     env_p->set("true", true);
     env_p->set("false", false);
     env_p->set("quote", make_shared< quote >());
+    env_p->set("eval", make_shared< evaluate >());
     env_p->set("list", make_shared< make_list >());
     env_p->set("require", make_shared< require >());
     env_p->set("=", make_shared< equals >());
@@ -675,7 +746,11 @@ namespace lime {
     env_p->set("delay", make_shared< delay >());
     env_p->set("cons-stream", make_shared< cons_stream >());
     env_p->set("print", make_shared< print >());
+    env_p->set("print-string", make_shared< print_string >());
+    env_p->set("print-to-string", make_shared< print_to_string >());
     env_p->set("read", make_shared< read >());
+    env_p->set("read-string", make_shared< read_string >());
+    env_p->set("read-from-string", make_shared< read_from_string >());
     srand(time(nullptr));
   }
 

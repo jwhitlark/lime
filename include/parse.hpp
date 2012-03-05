@@ -20,6 +20,10 @@ namespace lime {
 
   vector< string > split(const string& code);
 
+  string escape(const string& str);
+
+  string unescape(const string& str);
+
   bool paren_match(const string& code);
 
 } // namespace lime
