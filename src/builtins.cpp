@@ -391,7 +391,7 @@ namespace lime {
       return make_shared< logical_and_partial >(arg1);
     bool boolean1 = apply_visitor(bool_visitor(), arg1);
     if (boolean1) {
-      value arg2 = eval(args.front(), caller_env_p);
+      value arg2 = eval(args[1], caller_env_p);
       return apply_visitor(bool_visitor(), arg2);
     }
     return false;
@@ -422,7 +422,7 @@ namespace lime {
     bool boolean1 = apply_visitor(bool_visitor(), arg1);
       if (boolean1)
         return true;
-      value arg2 = eval(args.front(), caller_env_p);
+      value arg2 = eval(args[0], caller_env_p);
       return apply_visitor(bool_visitor(), arg2);
   }
 

@@ -307,6 +307,15 @@ From `list.lm`:
     5
     ```
 
+- `all`, `any`
+
+    ```
+    lime> (all (map even (list 2 6 3 8)))
+    false
+    lime> (any (map even (list 2 6 3 8)))
+    true
+    ```
+
 From `stream.lm`:
 
 - `empty-stream`

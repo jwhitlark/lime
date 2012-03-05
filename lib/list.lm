@@ -92,3 +92,15 @@
 (define count-if
   (lambda (l p)
     (len (filter p l))))
+
+(define all
+  (lambda (l)
+    (if (empty? l)
+        true
+        (and (head l) (all (tail l))))))
+
+(define any
+  (lambda (l)
+    (if (empty? l)
+        false
+        (or (head l) (any (tail l))))))
