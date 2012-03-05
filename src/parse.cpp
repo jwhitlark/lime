@@ -22,7 +22,7 @@ namespace lime {
   using lime::list;
   using lime::symbol;
 
-  string preprocess(const string& code)
+  string add_blanks(const string& code)
   {
     string new_code;
     bool string_expr = false;
@@ -32,9 +32,7 @@ namespace lime {
       else if (c == ')' && !string_expr)
         new_code += " ) ";
       else if (c == ' ' && string_expr)
-        new_code += "\\s";
-      else if (c == '\n' && string_expr)
-        new_code += "\\n";
+        new_code += "\\s";    
       else {
         if (c == '"')
           string_expr = !string_expr;
@@ -45,12 +43,12 @@ namespace lime {
 
   deque< string > tokenize(const string& code)
   {
-    istringstream iss(preprocess(code));
+    istringstream iss(add_blanks(code));
     deque< string > tokens;
     copy(istream_iterator< string >(iss),
          istream_iterator< string >(),
          back_inserter(tokens));
-    return tokens;
+    return tokens;    
   }
 
   string escape(const string& str)
@@ -59,6 +57,8 @@ namespace lime {
     for (char c: str)
       if (c == '\n')
         escaped += "\\n";
+      else if (c == '"')
+        escaped += "\\\"";
       else
         escaped.push_back(c);
     return escaped;
@@ -71,6 +71,11 @@ namespace lime {
     for (int i = 0; i + 1 < str.length(); ++i)
       if (str[i] == '\\' && str[i + 1] == 'n') {
         unescaped.push_back('\n');
+        ++i;
+        unescaped_last = true;
+      }
+      else if (str[i] == '\\' && str[i + 1] == '"') {
+        unescaped.push_back('"');
         ++i;
         unescaped_last = true;
       }

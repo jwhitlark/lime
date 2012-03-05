@@ -205,6 +205,14 @@ User input to `read` is treated as code:
     4
     ```
 
+Quotation marks inside string values must be escaped with a backslash:
+
+    lime> (println-string "this is a \"string\"")
+    this is a "string"
+    lime> (read-from-string "(define (foo) (println-string \"hello\"))")
+    lime> (foo)
+    hello
+
 Partial function application is also a possibility. The following two definitions are equivalent:
 
     lime> (defun succ1 (n) (+ 1 n))
