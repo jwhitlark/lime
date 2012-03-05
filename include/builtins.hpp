@@ -28,7 +28,7 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
-  class require : public lambda {
+  class load : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };

@@ -84,13 +84,15 @@ Builtin functions:
 - `random`, `rand-max` (`random` returns a pseudo-random integer between 0 and `rand-max` included)
 - `and`, `or` (short-circuited logical operators)
 - `atom?` (true if the argument is anything but a list)
-- `empty?` (false if the argument is anything but the empty list)
+- `empty?` (returns whether a list is empty)
 
     ```
     lime> (empty? empty)
     true
     lime> (empty? (list 1 2 3))
     false
+    lime> (empty? (tail (list 1)))
+    true
     ```
   
 - `cons` (construct a new list by appending an element on the front)

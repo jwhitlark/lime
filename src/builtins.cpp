@@ -53,9 +53,9 @@ namespace lime {
     return lst;
   }  
 
-  class require_visitor : public static_visitor<> {
+  class load_visitor : public static_visitor<> {
   public:
-    require_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    load_visitor(shared_ptr< environment > ep) : env_p(ep) {}
     void operator()(const string& path) const
     {
       load_file(path, env_p);
@@ -63,16 +63,16 @@ namespace lime {
     template< typename T >
     void operator()(const T& t) const
     {
-      check(false, "argument to 'require' must be a string.");
+      check(false, "argument to 'load' must be a string.");
     }
   private:
     shared_ptr< environment > env_p;
   };
 
-  value require::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  value load::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 1, "wrong number of arguments to 'require' (must be 1).");
-    apply_visitor(require_visitor(caller_env_p), args.front());
+    check(args.size() == 1, "wrong number of arguments to 'load' (must be 1).");
+    apply_visitor(load_visitor(caller_env_p), args.front());
     return nil();
   }
 
@@ -465,13 +465,13 @@ namespace lime {
     template< typename T >
     bool operator()(const T& t) const
     {
-      return false;
+      check(false, "argument to 'empty?' must be a list.");
     }
   };
 
   value is_empty::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 1, "wrong number of arguments to 'null?' (must be 1).");
+    check(args.size() == 1, "wrong number of arguments to 'empty?' (must be 1).");
     value arg = eval(args.front(), caller_env_p);
     return apply_visitor(is_empty_visitor(), arg);
   }
@@ -725,7 +725,7 @@ namespace lime {
     env_p->set("quote", make_shared< quote >());
     env_p->set("eval", make_shared< evaluate >());
     env_p->set("list", make_shared< make_list >());
-    env_p->set("require", make_shared< require >());
+    env_p->set("load", make_shared< load >());
     env_p->set("=", make_shared< equals >());
     env_p->set("<", make_shared< less_than >());
     env_p->set("+", make_shared< plus >());
