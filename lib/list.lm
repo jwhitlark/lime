@@ -44,25 +44,25 @@
 (define (take n l)
   (if (= n 0)
       empty
-      (cons (head l) (take (tail l) (- n 1)))))
+      (cons (head l) (take (- n 1) (tail l)))))
 
 (define (drop n l)
   (if (empty? l)
       empty
       (if (= 0 n)
           l
-          (drop (tail l) (- n 1)))))
+          (drop (- n 1) (tail l)))))
 
 (define (take-while p l)
   (if (or (empty? l) (not (p (head l))))
       empty
-      (cons (head l) (take-while (tail l) p))))
+      (cons (head l) (take-while p (tail l)))))
 
 (define (drop-while p l)
   (if (empty? l)
       empty
       (if (p (head l))
-          (drop-while (tail l) p)
+          (drop-while p (tail l))
           l)))    
 
 (define (zip-with f l1 l2)
