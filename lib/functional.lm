@@ -1,10 +1,8 @@
-(define apply
-  (lambda (f x) (f x)))
+(define (apply f x) 
+  (f x))
 
-(define compose
-  (lambda (f g)
-    (lambda (x) (f (g x)))))
+(define (compose f g)
+  (lambda (x) (f (g x))))
 
-(define flip
-  (lambda (f)
-    (lambda (x y) (f y x))))
+(define (flip f)
+  (lambda (x y) (f y x)))

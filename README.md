@@ -28,7 +28,8 @@ Basic syntax:
 - `(set! x expr)` (redefine a symbol)
 - `(begin expr1 expr2 ...)` (execute several expressions sequentially, in a nested environment; the last expression determines the return value of the whole block)
 - `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
-- `(lambda (params) expr)` (create an anonymous function)
+- `(lambda (param1 param2 ...) expr)` (create an anonymous function)
+- `(define (f param1 param2 ...) expr)` (create a function and assign it to the symbol given as first argument)
 - `true`, `false`
 - `nil` (nothing; nada; nichts)
 
@@ -175,7 +176,7 @@ User input to `read` is treated as code:
 
 Partial function application is also a possibility. The following two definitions are equivalent:
 
-    lime> (define succ1 (lambda (n) (+ 1 n)))
+    lime> (defun succ1 (n) (+ 1 n))
     lime> (define succ2 (+ 1))
     lime> (succ1 4)
     5
@@ -284,8 +285,8 @@ From `functional.lm`:
 - `compose` (compose two functions)
 
     ```
-    lime> (define add1 (lambda (x) (+ x 1)))
-    lime> (define multiply2 (lambda (x) (* x 2)))
+    lime> (defun add1 (x) (+ x 1))
+    lime> (defun multiply2 (x) (* x 2))
     lime> ( (compose add1 multiply2) 3)
     7
     ```
@@ -361,9 +362,9 @@ From `list.lm`:
 - `count`, `count-if`
 
     ```
-    lime> (count (list 1 2 3 2 4 2) 2)
+    lime> (count 2 (list 1 2 3 2 4 2))
     3
-    lime> (count-if (range 1 10) even)
+    lime> (count-if even (range 1 10))
     5
     ```
 

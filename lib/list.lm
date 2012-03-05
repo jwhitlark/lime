@@ -2,105 +2,89 @@
 
 (define list? (compose not atom?))
 
-(define len
-  (lambda (l)
-    (if (empty? l)
-        0
-        (+ 1 (len (tail l))))))
+(define (len l)
+  (if (empty? l)
+      0
+      (+ 1 (len (tail l)))))
 
-(define init
-  (lambda (l)
-    (if (= 1 (len l))
-        empty
-        (cons (head l) (init (tail l))))))
+(define (init l)
+  (if (= 1 (len l))
+      empty
+      (cons (head l) (init (tail l)))))
 
-(define last
-  (lambda (l)
-    (if (= 1 (len l))
-        (head l)
-        (last (tail l)))))
+(define (last l)
+  (if (= 1 (len l))
+      (head l)
+      (last (tail l))))
 
-(define map
-  (lambda (f l)
-    (if (empty? l)
-        empty
-        (cons (f (head l)) (map f (tail l))))))
+(define (map f l)
+  (if (empty? l)
+      empty
+      (cons (f (head l)) (map f (tail l)))))
 
-(define filter
-  (lambda (p l)
-    (if (empty? l)
-        empty
-        (if (p (head l))
-            (cons (head l) (filter p (tail l)))
-            (filter p (tail l))))))
+(define (filter p l)
+  (if (empty? l)
+      empty
+      (if (p (head l))
+          (cons (head l) (filter p (tail l)))
+          (filter p (tail l)))))
 
-(define fold
-  (lambda (f i l)
-    (if (empty? l)
-        i
-        (fold f (f i (head l)) (tail l)))))
+(define (fold f i l)
+  (if (empty? l)
+      i
+      (fold f (f i (head l)) (tail l))))
 
-(define for-each
-  (lambda (f l)
-    (if (empty? l)
-        nil
-        (begin
-          (f (head l))
-          (for-each f (tail l))))))
+(define (for-each f l)
+  (if (empty? l)
+      nil
+      (begin
+        (f (head l))
+        (for-each f (tail l)))))
 
-(define take
-  (lambda (n l)
-    (if (= n 0)
-        empty
-        (cons (head l) (take (tail l) (- n 1))))))
+(define (take n l)
+  (if (= n 0)
+      empty
+      (cons (head l) (take (tail l) (- n 1)))))
 
-(define drop
-  (lambda (n l)
-    (if (empty? l)
-        empty
-        (if (= 0 n)
-            l
-            (drop (tail l) (- n 1))))))
+(define (drop n l)
+  (if (empty? l)
+      empty
+      (if (= 0 n)
+          l
+          (drop (tail l) (- n 1)))))
 
-(define take-while
-  (lambda (p l)
-    (if (or (empty? l) (not (p (head l))))
-        empty
-        (cons (head l) (take-while (tail l) p)))))
+(define (take-while p l)
+  (if (or (empty? l) (not (p (head l))))
+      empty
+      (cons (head l) (take-while (tail l) p))))
 
-(define drop-while
-  (lambda (p l)
-    (if (empty? l)
-        empty
-        (if (p (head l))
-            (drop-while (tail l) p)
-            l))))    
+(define (drop-while p l)
+  (if (empty? l)
+      empty
+      (if (p (head l))
+          (drop-while (tail l) p)
+          l)))    
 
-(define zip-with
-  (lambda (f l1 l2)
-    (if (or (empty? l1) (empty? l2))
-        empty
-        (cons (f (head l1) (head l2))
-              (zip-with f (tail l1) (tail l2))))))
+(define (zip-with f l1 l2)
+  (if (or (empty? l1) (empty? l2))
+      empty
+      (cons (f (head l1) (head l2))
+            (zip-with f (tail l1) (tail l2)))))
 
 (define zip (zip-with list))
 
-(define count
-  (lambda (l x) 
-    (len (filter (= x) l))))
+(define (count x l) 
+  (len (filter (= x) l)))
 
-(define count-if
-  (lambda (l p)
-    (len (filter p l))))
+(define (count-if p l)
+  (len (filter p l)))
 
-(define all
-  (lambda (l)
-    (if (empty? l)
-        true
-        (and (head l) (all (tail l))))))
+(define (all l)
+  (if (empty? l)
+      true
+      (and (head l) (all (tail l)))))
 
-(define any
-  (lambda (l)
-    (if (empty? l)
-        false
-        (or (head l) (any (tail l))))))
+(define (any l)
+  (if (empty? l)
+      false
+      (or (head l) (any (tail l)))))

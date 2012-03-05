@@ -31,24 +31,6 @@ namespace lime {
       check(false, "first argument to 'if' must evaluate to boolean.");
     }
   };
-  
-  class define_visitor : public static_visitor<> {
-  public:
-    define_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
-    void operator()(const symbol& sym) const
-    {
-      check(!env_p->find(sym), "attempting to redefine symbol '" + sym + "'.");
-      env_p->set(sym, eval(expr[2], env_p));
-    }
-    template< typename T >
-    void operator()(const T& t) const
-    {
-      check(false, "first argument to 'define' must be a symbol.");
-    }
-  private:
-    list expr;
-    shared_ptr< environment > env_p;
-  };
 
   class set_visitor : public static_visitor<> {
   public:
@@ -96,6 +78,47 @@ namespace lime {
     {
       check(false, "first argument to 'lambda' must be a list of parameters.");
     }
+  };
+
+  class function_name_visitor : public static_visitor< symbol > {
+  public:
+    symbol operator()(const symbol& sym) const
+    {
+      return sym;
+    }
+    template< typename T >
+    symbol operator()(const T& t) const
+    {
+      check(false, "function name must be a symbol.");
+    }
+  };
+
+  class define_visitor : public static_visitor<> {
+  public:
+    define_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    void operator()(const symbol& sym) const
+    {
+      check(!env_p->find(sym), "attempting to redefine symbol '" + sym + "'.");
+      env_p->set(sym, eval(expr[2], env_p));
+    }
+    void operator()(const list& lst) const
+    {
+      check(lst.size() >= 0, "syntax error in 'define'.");
+      value sym_v = lst.head();
+      symbol sym = apply_visitor(function_name_visitor(), sym_v);
+      check(!env_p->find(sym), "attempting to redefine symbol '" + sym + "'.");
+      value params_v = lst.tail();
+      vector< symbol > params = apply_visitor(lambda_params_visitor(), params_v);
+      env_p->set(sym, make_shared< lambda >(params, expr[2], env_p));
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "first argument to 'define' must be a symbol.");
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
   };
 
   class lambda_call_visitor : public static_visitor< value > {

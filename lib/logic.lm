@@ -1,7 +1,5 @@
-(define not
-  (lambda (b)
-    (if b false true)))
+(define (not b)
+  (if b false true))
 
-(define xor
-  (lambda (a b)
-    (if a (not b) b)))
+(define (xor a b)
+  (if a (not b) b))

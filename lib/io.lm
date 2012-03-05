@@ -1,31 +1,27 @@
-(define println 
-  (lambda (x) 
-    (begin 
-      (print x)
-      (print-string "\n")))) 
+(define (println x)
+  (begin 
+    (print x)
+    (print-string "\n"))) 
 
-(define println-string
-  (lambda (s)
-    (begin
-      (print-string s)
-      (print-string "\n"))))
+(define (println-string s)
+  (begin
+     (print-string s)
+     (print-string "\n")))
 
-(define print-stream
-  (lambda (s)
-    (begin
-      (print-string "(")
-      (if (not (empty-stream? s))
-          (begin
-            (for-each-stream
-              (lambda (x) (begin (print x) (print-string " ")))
-              (init-stream s))
+(define (print-stream s)
+  (begin
+    (print-string "(")
+    (if (not (empty-stream? s))
+        (begin
+          (for-each-stream
+            (lambda (x) (begin (print x) (print-string " ")))
+            (init-stream s))
             (print (last-stream s)))
-          nil)
-      (print-string ")"))))
+        nil)
+    (print-string ")")))
 
-(define println-stream
-  (lambda (s)
-    (begin
-      (print-stream s)
-      (print-string "\n"))))
+(define (println-stream s)
+  (begin
+    (print-stream s)
+    (print-string "\n")))
 

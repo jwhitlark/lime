@@ -1,61 +1,49 @@
-(define neg
-  (lambda (x)
-    (- 0 x)))
+(define (neg x)
+  (- 0 x))
 
-(define !=
-  (lambda (x y)
-    (not (= x y))))
+(define (!= x y)
+  (not (= x y)))
 
-(define >
-  (lambda (x y)
-    (< y x)))
+(define (> x y)
+  (< y x))
 
-(define >=
-  (lambda (x y)
-    (not (< x y))))
+(define (>= x y)
+  (not (< x y)))
 
-(define <=
-  (lambda (x y)
-    (>= y x)))
+(define (<= x y)
+  (>= y x))
 
-(define even
-  (lambda (n)
-    (= 0 (% n 2))))
+(define (even n)
+  (= 0 (% n 2)))
 
 (define odd
   (compose not even))
 
-(define max
-  (lambda (a b)
-    (if (> a b) a b)))
+(define (max a b)
+  (if (> a b) a b))
 
-(define min
-  (lambda (a b)
-    (if (< a b) a b)))
+(define (min a b)
+  (if (< a b) a b))
 
-(define max-list
-  (lambda (l)
-    (if (= 1 (len l))
-        (head l)
-        (max (head l) (max-list (tail l))))))
+(define (max-list l)
+  (if (= 1 (len l))
+      (head l)
+      (max (head l) (max-list (tail l)))))
 
-(define min-list
-  (lambda (l)
-    (if (= 1 (len l))
-        (head l)
-        (min (head l) (min-list (tail l))))))
+(define (min-list l)
+  (if (= 1 (len l))
+      (head l)
+      (min (head l) (min-list (tail l)))))
 
-(define max-stream
-  (lambda (s)
-    (if (= 1 (len-stream s))
-        (head-stream s)
-        (max (head-stream s) (max-stream (tail-stream s))))))
+(define (max-stream s)
+  (if (= 1 (len-stream s))
+      (head-stream s)
+      (max (head-stream s) (max-stream (tail-stream s)))))
 
-(define min-stream
-  (lambda (s)
-    (if (= 1 (len-stream s))
-        (head-stream s)
-        (min (head-stream s) (min-stream (tail-stream s))))))
+(define (min-stream s)
+  (if (= 1 (len-stream s))
+      (head-stream s)
+      (min (head-stream s) (min-stream (tail-stream s)))))
 
 (define sum (fold + 0))
 
@@ -65,17 +53,15 @@
 
 (define product-stream (fold-stream * 1))
 
-(define range
-  (lambda (a b)
-    (if (> a b)
-        empty
-        (cons a (range (+ 1 a) b)))))
+(define (range a b)
+  (if (> a b)
+      empty
+      (cons a (range (+ 1 a) b))))
 
-(define range-stream
-  (lambda (a b)
-    (if (> a b)
-        empty-stream
-        (cons-stream a (range-stream (+ 1 a) b)))))
+(define (range-stream a b)
+  (if (> a b)
+      empty-stream
+      (cons-stream a (range-stream (+ 1 a) b))))
 
 (define enum (enum-with (+ 1)))
 
@@ -85,19 +71,16 @@
 
 (define add-stream (zip-with-stream +))
 
-(define square
-  (lambda (x)
-    (* x x)))
+(define (square x)
+  (* x x))
 
-(define pow
-  (lambda (x n)
-    (if (= n 0)
+(define (pow x n)
+  (if (= n 0)
       1
       (if (even n)
-        (pow (square x) (/ n 2))
-        (* x (pow (square x) (/ (- n 1) 2)))))))
+          (pow (square x) (/ n 2))
+          (* x (pow (square x) (/ (- n 1) 2))))))
 
-(define fact
-  (lambda (n)
-    (product (range 1 n))))
+(define (fact n)
+  (product (range 1 n)))
 
