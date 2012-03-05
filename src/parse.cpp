@@ -68,7 +68,7 @@ namespace lime {
   {
     string unescaped;
     bool unescaped_last = false;
-    for (int i = 0; i < str.length() - 1; ++i)
+    for (int i = 0; i + 1 < str.length(); ++i)
       if (str[i] == '\\' && str[i + 1] == 'n') {
         unescaped.push_back('\n');
         ++i;
