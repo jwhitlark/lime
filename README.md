@@ -66,12 +66,12 @@ Builtin functions:
 
 - `eval` (evaluate an expression)
 
-   ```
-   lime> (define foo (quote (+ x 6)))
-   lime> (define x 3)
-   lime> (eval foo)
-   9
-   ```
+    ```
+    lime> (define foo (quote (+ x 6)))
+    lime> (define x 3)
+    lime> (eval foo)
+    9
+    ```
 
 - `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
@@ -130,11 +130,11 @@ Builtin functions:
 
 - `print-to-string` (return a string representation of the argument)
 
-   ```
-   lime> (print-to-string 4)
-   "4"lime> (print-to-string "hello")
-   ""hello""lime>
-   ```
+    ```
+    lime> (print-to-string 4)
+    "4"lime> (print-to-string "hello")
+    ""hello""lime>
+    ```
 
 - `read` (read an expression from standard input)
 
