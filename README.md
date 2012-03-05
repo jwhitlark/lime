@@ -24,9 +24,40 @@ Language overview
 
 Basic syntax:
 
-- `(define x expr)` (define a symbol for the first time)
-- `(set! x expr)` (redefine a symbol)
 - `(begin expr1 expr2 ...)` (execute several expressions sequentially, in a nested environment; the last expression determines the return value of the whole block)
+- `(define x expr)` (define a symbol for the first time in the current environment)
+
+Note that a nested definition of the same symbol shadows it:
+
+    lime> (define x 1)
+    lime> (begin (define x 2) x)
+    2
+    lime> x
+    1
+
+However, we cannot redefine a symbol in the same environment:
+
+    lime> (define y 1)
+    lime> (define y 2)
+    ERROR: attempting to redefine symbol 'y'.
+
+- `(set! x expr)` (redefine a symbol in the outermost environment where it is defined)
+
+    ```
+    lime> (define z 1)
+    lime> (begin (set! z 2))
+    lime> z
+    2
+    lime> (set! z 3)
+    lime> z
+    3
+    ```
+
+We cannot define a symbol for the first time using `set!`:
+
+    lime> (set! a 42)
+    ERROR: argument 'a' to 'set!' is undefined.
+
 - `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
 - `(lambda (param1 param2 ...) expr)` (create an anonymous function)
 - `(define (f param1 param2 ...) expr)` (create a function and assign it to the symbol given as first argument)

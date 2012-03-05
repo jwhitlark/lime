@@ -8,9 +8,9 @@
 (define M
   (lambda (f)
     (lambda (l)
-      (if (null? l)
+      (if (empty? l)
           (quote ())
-          (if (null? (tail l))
+          (if (empty? (tail l))
               (head l)
               (max (head l) (f (tail l))))))))
 

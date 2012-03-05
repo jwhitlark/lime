@@ -32,24 +32,6 @@ namespace lime {
     }
   };
 
-  class set_visitor : public static_visitor<> {
-  public:
-    set_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
-    void operator()(const symbol& sym) const
-    {
-      check(env_p->find(sym), "argument '" + sym + "' to 'set!' is undefined.");
-      env_p->set(sym, eval(expr[2], env_p));
-    }
-    template< typename T >
-    void operator()(const T& t) const
-    {
-      check(false, "first argument to 'set' must be a symbol.");
-    }
-  private:
-    list expr;
-    shared_ptr< environment > env_p;
-  };
-
   class parameter_visitor : public static_visitor< symbol > {
   public:
     symbol operator()(const symbol& sym) const
@@ -98,7 +80,7 @@ namespace lime {
     define_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
     void operator()(const symbol& sym) const
     {
-      check(!env_p->find(sym), "attempting to redefine symbol '" + sym + "'.");
+      check(!env_p->find_innermost(sym), "attempting to redefine symbol '" + sym + "'.");
       env_p->set(sym, eval(expr[2], env_p));
     }
     void operator()(const list& lst) const
@@ -106,7 +88,7 @@ namespace lime {
       check(lst.size() >= 0, "syntax error in 'define'.");
       value sym_v = lst.head();
       symbol sym = apply_visitor(function_name_visitor(), sym_v);
-      check(!env_p->find(sym), "attempting to redefine symbol '" + sym + "'.");
+      check(!env_p->find_innermost(sym), "attempting to redefine symbol '" + sym + "'.");
       value params_v = lst.tail();
       vector< symbol > params = apply_visitor(lambda_params_visitor(), params_v);
       env_p->set(sym, make_shared< lambda >(params, expr[2], env_p));
@@ -115,6 +97,24 @@ namespace lime {
     void operator()(const T& t) const
     {
       check(false, "first argument to 'define' must be a symbol.");
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
+  };
+
+  class set_visitor : public static_visitor<> {
+  public:
+    set_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    void operator()(const symbol& sym) const
+    {
+      check(env_p->find(sym), "argument '" + sym + "' to 'set!' is undefined.");
+      env_p->set_outermost(sym, eval(expr[2], env_p));
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "first argument to 'set' must be a symbol.");
     }
   private:
     list expr;
