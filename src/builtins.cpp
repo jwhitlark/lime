@@ -548,7 +548,7 @@ namespace lime {
 
   class elem_visitor : public static_visitor< value > {
   public:
-    value operator()(const list& lst, const int i) const
+    value operator()(const int i, const list& lst) const
     {
       check(i >= 1 && i <= lst.size(), "list index out of range.");
       return lst[i - 1];
@@ -556,7 +556,7 @@ namespace lime {
     template< typename T, typename U >
     value operator()(const T& t, const U& u) const
     {
-      check(false, "arguments to 'elem' must be a non-empty list and an integer.");
+      check(false, "arguments to 'elem' must be an integer index and a non-empty list.");
     }
   };
 

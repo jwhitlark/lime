@@ -93,7 +93,7 @@ Builtin functions:
 - `elem` (return a particular element of a list)
 
     ```
-    lime> (elem (list 6 2 5 2 8) 3)
+    lime> (elem 3 (list 6 2 5 2 8))
     5
     ```
 
@@ -139,9 +139,9 @@ The language also provides lazy-evaluated, memoized streams as an alternative to
 For example, this is how we build an infinite stream of ones:
 
     lime> (define ones (cons-stream 1 ones))
-    lime> (elem-stream ones 3)
+    lime> (elem-stream 3 ones)
     1
-    lime> (elem-stream ones 45)
+    lime> (elem-stream 45 ones)
     1
 
 All the remaining functionality is provided in the standard library, as we shall see.
@@ -164,14 +164,14 @@ From `numeric.lm`:
 - `enum` (enumerate all integers starting from the argument; returns a stream)
 
     ```
-    lime> (elem-stream (enum 2) 12)
+    lime> (elem-stream 12 (enum 2))
     13
     ```
 
 - `naturals` (the stream of all natural numbers)
 
     ```
-    lime> (elem naturals 42)
+    lime> (elem 42 naturals)
     42
     ```
 
@@ -276,9 +276,9 @@ From `list.lm`:
 - `take`, `drop` (take/drop the first n elements of a list)
 
     ```
-    lime> (take (range 1 10) 5)
+    lime> (take 5 (range 1 10))
     (1 2 3 4 5)
-    lime> (drop (range 1 10) 5)
+    lime> (drop 5 (range 1 10))
     (6 7 8 9 10)
     ```
 
@@ -330,14 +330,14 @@ From `stream.lm`:
 - `repeat` (repeat the argument infinite times)
 
     ```
-    lime> (elem-stream (repeat 7) 54)
+    lime> (elem-stream 50 (repeat 7))
     7
     ```
 - `enum-with` (like `enum`, but uses a custom successor function)
 
     ```
     lime> (define tf (enum-with not true))
-    lime> (println-stream (take-stream tf 5))
+    lime> (println-stream (take-stream 5 tf))
     (true false true false true)
     ```
 

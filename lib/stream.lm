@@ -8,17 +8,17 @@
 
 (define head-stream
   (lambda (s)
-    (elem s 1)))
+    (elem 1 s)))
 
 (define tail-stream
   (lambda (s)
-    (force (elem s 2))))
+    (force (elem 2 s))))
 
 (define elem-stream
-  (lambda (s i)
+  (lambda (i s)
     (if (= i 1)
         (head-stream s)
-        (elem-stream (tail-stream s) (- i 1)))))
+        (elem-stream (- i 1) (tail-stream s)))))
 
 (define eq-stream
   (lambda (s1 s2)
@@ -74,13 +74,13 @@
           (for-each-stream f (tail-stream s))))))
 
 (define take-stream
-  (lambda (s n)
+  (lambda (n s)
     (if (= n 0)
         empty-stream
         (cons-stream (head-stream s) (take-stream (tail-stream s) (- n 1))))))
 
 (define drop-stream
-  (lambda (s n)
+  (lambda (n s)
     (if (empty-stream? s)
         s
         (if (= 0 n)
@@ -88,13 +88,13 @@
             (drop-stream (tail-stream s) (- n 1))))))
 
 (define take-while-stream
-  (lambda (s p)
+  (lambda (p s)
     (if (or (empty-stream? s) (not (p (head-stream s))))
         empty-stream
         (cons-stream (head-stream s) (take-while-stream (tail-stream s) p)))))
 
 (define drop-while-stream
-  (lambda (s p)
+  (lambda (p s)
     (if (empty-stream? s)
         empty-stream
         (if (p (head-stream s))
