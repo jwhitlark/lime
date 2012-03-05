@@ -73,10 +73,10 @@ Builtin functions:
     9
     ```
 
-- `require` (evaluate the content of the file in the global environment; useful to load functions from external modules)
+- `load` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
     ```
-    lime> (require "path/to/myfile.lm")
+    lime> (load "path/to/myfile.lm")
     ```
 
 - `=` (works with any builtin type, including lists)
