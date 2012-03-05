@@ -1,25 +1,22 @@
-(define primes
-  (lambda (n)
-    (begin
-      (define sieve
-        (lambda (l)
-          (if (null? l)
-              l
-              (cons (head l)
-                    (sieve (filter 
-                           (lambda (n) (!= 0 (% n (head l)))) 
-                           (tail l)))))))
-      (sieve (range 2 n)))))
+(define (primes n)
+  (begin
+    (define (sieve l)
+      (if (empty? l)
+          l
+          (cons (head l)
+                (sieve (filter 
+                       (lambda (n) (!= 0 (% n (head l)))) 
+                       (tail l))))))
+    (sieve (range 2 n))))
 
 (define primes-stream
   (begin
-    (define sieve
-      (lambda (s)
-        (if (empty-stream? s)
-            s
-            (cons-stream (head-stream s)
-                         (sieve (filter-stream
-                                (lambda (n) (!= 0 (% n (head-stream s))))
-                                (tail-stream s)))))))
+    (define (sieve s)
+      (if (empty-stream? s)
+          s
+          (cons-stream (head-stream s)
+                       (sieve (filter-stream
+                              (lambda (n) (!= 0 (% n (head-stream s))))
+                              (tail-stream s))))))
     (sieve (enum 2))))
-        
+    

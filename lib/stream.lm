@@ -4,7 +4,8 @@
 
 (define empty-stream empty)
 
-(define empty-stream? empty?)
+(define (empty-stream? s)
+  (and (list? s) (empty? s)))
 
 (define head-stream
   (lambda (s)
@@ -77,7 +78,7 @@
   (lambda (n s)
     (if (= n 0)
         empty-stream
-        (cons-stream (head-stream s) (take-stream (tail-stream s) (- n 1))))))
+        (cons-stream (head-stream s) (take-stream (- n 1) (tail-stream s))))))
 
 (define drop-stream
   (lambda (n s)
@@ -85,20 +86,20 @@
         s
         (if (= 0 n)
             s
-            (drop-stream (tail-stream s) (- n 1))))))
+            (drop-stream (- n 1) (tail-stream s))))))
 
 (define take-while-stream
   (lambda (p s)
     (if (or (empty-stream? s) (not (p (head-stream s))))
         empty-stream
-        (cons-stream (head-stream s) (take-while-stream (tail-stream s) p)))))
+        (cons-stream (head-stream s) (take-while-stream p (tail-stream s))))))
 
 (define drop-while-stream
   (lambda (p s)
     (if (empty-stream? s)
         empty-stream
         (if (p (head-stream s))
-            (drop-while-stream (tail-stream s) p)
+            (drop-while-stream p (tail-stream s))
             l))))    
 
 (define zip-with-stream
