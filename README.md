@@ -435,11 +435,13 @@ From `stream.lm`:
     ```
 - `enum-with` (like `enum`, but uses a custom successor function)
 
-<code>
-lime> (define tf (enum-with not true))
-lime> (println-stream (take-stream 5 tf))
-(true false true false true)
-</code>
+    ```
+    lime> (define tf (enum-with not true))
+    lime> (println-stream (take-stream 5 tf))
+    (true false true false true)
+    ```
+
+<del>this line is here to make github's broken markdown happy</del>
 
 Credits
 -------
