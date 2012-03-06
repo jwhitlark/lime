@@ -92,7 +92,7 @@ namespace lime {
     value get(string str);
     void set(symbol sym, value val);
     void set(string str, value val);
-    bool find_innermost(symbol sym);
+    bool find_local(symbol sym);
     void set_outermost(symbol sym, value val);
     friend shared_ptr< environment > nested_environment(shared_ptr< environment > 
                                                         outer_env_p);

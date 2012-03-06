@@ -41,14 +41,17 @@ However, we cannot redefine a symbol in the same environment:
     lime> (define y 2)
     ERROR: attempting to redefine symbol 'y'.
 
-- `(set! x expr)` (redefine a symbol in the outermost environment where it is defined)
+- `(set! x expr)` (redefine a symbol in the innermost environment where it is already defined)
 
     ```
     lime> (define z 1)
-    lime> (begin (set! z 2))
+    lime> (set! z 2)
     lime> z
     2
-    lime> (set! z 3)
+    lime> (begin (set! z 3))
+    lime> z
+    3
+    lime> (begin (define z 4) (set! z 5))
     lime> z
     3
     ```

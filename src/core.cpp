@@ -133,7 +133,7 @@ namespace lime {
     set(symbol(str), val);
   }
 
-  bool environment::find_innermost(symbol sym)
+  bool environment::find_local(symbol sym)
   {
     return values.find(sym) != end(values);
   }
@@ -144,7 +144,8 @@ namespace lime {
       outer_env_p->set_outermost(sym, val);
     else
       set(sym, val);
-  }
+  }  
+
   shared_ptr< environment > nested_environment(shared_ptr< environment > outer_env_p)
   {
     auto nested_env_p = make_shared< environment >();
