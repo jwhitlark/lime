@@ -17,7 +17,7 @@ Usage
 -----
 
 Either run a program with `lime path/to/myprogram.lm` or work interactively in the REPL by just running `lime`.
-The REPL supports multi-line expressions as well as multiple expressions on a single line (can you believe it?).
+The REPL supports multi-line expressions and has a rudimental auto-indenting facility.
 
 Language overview
 -----------------
