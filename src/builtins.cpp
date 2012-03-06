@@ -477,6 +477,26 @@ namespace lime {
     return apply_visitor(is_empty_visitor(), arg);
   }
 
+  class len_visitor : public static_visitor< int > {
+  public:
+    int operator()(const list& lst) const
+    {
+      return lst.size();
+    }
+    template< typename T >
+    int operator()(const T& t) const
+    {
+      check(false, "argument to 'len' must be a list.");
+    }
+  };
+
+  value len::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'len' (must be 1).");
+    value arg = eval(args.front(), caller_env_p);
+    return apply_visitor(len_visitor(), arg);
+  }
+
   class cons_visitor : public static_visitor< list > {
   public:
     template< typename T >
@@ -752,6 +772,7 @@ namespace lime {
     env_p->set("or", make_shared< logical_or >());
     env_p->set("atom?", make_shared< is_atom >());
     env_p->set("empty?", make_shared< is_empty >());
+    env_p->set("len", make_shared< len >());
     env_p->set("cons", make_shared< cons >());
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());

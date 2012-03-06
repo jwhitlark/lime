@@ -2,11 +2,6 @@
 
 (define list? (compose not atom?))
 
-(define (len l)
-  (if (empty? l)
-      0
-      (+ 1 (len (tail l)))))
-
 (define (init l)
   (if (= 1 (len l))
       empty

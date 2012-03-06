@@ -93,6 +93,11 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
+  class len : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class cons : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
