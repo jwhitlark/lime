@@ -173,8 +173,7 @@ namespace lime {
       else if (c == '(' && !string_expr)
         ++paren_count;
       else if (c == ')' && !string_expr) {
-        if (paren_count == 0)
-          check(false, "parentheses don't match.");
+        check(paren_count != 0, "parentheses don't match.");
         --paren_count;
       }
     return paren_count == 0;
@@ -195,7 +194,6 @@ namespace lime {
   }
 
   unordered_set< string > keywords { "define", 
-                                     "set!", 
                                      "begin", 
                                      "lambda" }; 
 
