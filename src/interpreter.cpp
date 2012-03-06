@@ -27,9 +27,11 @@ namespace lime {
 
   // lime
   using lime::eval;
+  using lime::indent;
   using lime::output;
   using lime::paren_match;
   using lime::parse;
+  using lime::quot_match;
   using lime::split;
 
   void check(bool test, const string& error_msg)
@@ -78,12 +80,17 @@ namespace lime {
     string line;
     while (getline(cin, line)) {
       string code = line;
-      while (!paren_match(code)) {
+      stack< int > open_parens;
+      while (!paren_match(code) || !quot_match(code)) {
+        int ind = indent(line, open_parens);
+        cout << string(ind + prompt.length(), ' ');
         if (!getline(cin, line)) {
           cout << bye;
           return;
         }
-        code += " " + line;
+        if (quot_match(code))
+          code.push_back(' ');
+        code += line;
       }
       vector< string > parts = split(code);
       for (auto it = begin(parts); it + 1 < end(parts); ++it)

@@ -2,6 +2,7 @@
 #define __PARSE_HPP__
 
 // STL headers
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,7 @@
 
 namespace lime {
   // STL
+  using std::stack;
   using std::string;
   using std::vector;
 
@@ -25,6 +27,10 @@ namespace lime {
   string unescape(const string& str);
 
   bool paren_match(const string& code);
+
+  bool quot_match(const string& code);
+
+  int indent(const string& code, stack< int >& open_parens, int indent_length=2);
 
 } // namespace lime
 
