@@ -236,15 +236,20 @@ This applies to functions of any number of arguments:
 
 The language also provides lazy-evaluated, memoized streams as an alternative to lists:
 
+- `empty-stream`
+- `empty-stream?`
 - `cons-stream` (construct a stream from an element and a tail stream)
+- `head-stream`, `tail-stream`
 
 For example, this is how we build an infinite stream of ones:
 
     lime> (define ones (cons-stream 1 ones))
-    lime> (elem-stream 3 ones)
-    1
-    lime> (elem-stream 45 ones)
-    1
+    lime> ones
+    (1 ...)
+    lime> (tail-stream ones)
+    (1 ...)
+    lime> (tail-stream (tail-stream ones))
+    (1 ...)
 
 All the remaining functionality is provided in the standard library, as we shall see.
 
@@ -255,7 +260,7 @@ From `io.lm`:
 - `println` (print the argument and append a newline)
 - `println-string`
 
-- `print-stream`, `println-stream` (evaluate and print all elements of a non-infinite stream)
+- `print-stream`, `println-stream` (evaluate and print all elements of a finite stream)
 
 From `numeric.lm`:
 
@@ -285,11 +290,11 @@ From `numeric.lm`:
     6
     ```
 
-- `sum-stream`, `product-stream` (for integer streams)
+- `sum-stream`, `product-stream` (for finite, integer streams)
 
 - `max`, `min` (for two integer arguments)
 - `max-list`, `min-list` (for lists of integers)
-- `max-stream`, `min-stream`
+- `max-stream`, `min-stream` (for finite, integer streams)
 
 - `range`
 
@@ -421,13 +426,12 @@ From `list.lm`:
 
 From `stream.lm`:
 
-- `empty-stream`
-- `head-stream`, `tail-stream`, `init-stream`, `last-stream`
+- `init-stream`, `last-stream` (for finite streams)
 - `elem-stream`
-- `eq-stream` (test equality of non-infinite streams)
-- `len-stream`
+- `eq-stream` (test equality of finite streams)
+- `len-stream` (for finite streams)
 - `map-stream`, `filter-stream`, `fold-stream`
-- `for-each-stream`
+- `for-each-stream` (for finite streams)
 - `take-stream`, `drop-stream`, `take-while-stream`, `drop-while-stream`
 - `zip-stream`, `zip-with-stream`
 - `repeat` (repeat the argument infinite times)
