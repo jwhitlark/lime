@@ -31,6 +31,7 @@ namespace lime {
   using lime::nil;
   using lime::output;
   using lime::parse;
+  using lime::stream_visitor;
   using lime::unescape;
 
   value quote::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -594,37 +595,14 @@ namespace lime {
     return apply_visitor(elem_visitor(), arg1, arg2);   
   }
   
-  class memoized_proc : public lambda {
-  public:
-    memoized_proc(value x, shared_ptr< environment > e) : 
-      lambda(vector< symbol >(), x, e),
-      already_run(false) {}
-    value call(vector< value > args, shared_ptr< environment > caller_env_p)
-    {
-      if (!already_run)
-        cache = lambda::call(args, caller_env_p);
-      return cache;
-    }
-  private:
-    bool already_run;
-    value cache;
-  };
-
-  value delay::call(vector< value > args, shared_ptr< environment > caller_env_p)
-  {
-    check(args.size() == 1, "wrong number of arguments to 'delay' (must be 1).");
-    return make_shared< memoized_proc >(args[0], caller_env_p);
-  }
-
   class cons_stream_partial : public lambda {
   public:
     cons_stream_partial(value a1) : arg1(a1) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
       check(args.size() == 1, "wrong number of arguments to 'cons-stream <expr>' (must be 1).");
-      value arg2 = delay().call(vector< value > { args[0] }, caller_env_p);
-      list stream(deque< value > { arg1, arg2 });
-      return stream;
+      value arg2 = args[1];
+      return make_shared< stream >(arg1, arg2, caller_env_p);
     }
   private:
     value arg1;
@@ -637,9 +615,44 @@ namespace lime {
     value arg1 = eval(args[0], caller_env_p);
     if (args.size() == 1)
       return make_shared< cons_stream_partial >(arg1);
-    value arg2 = delay().call(vector< value > { args[1] }, caller_env_p);
-    list stream(deque< value > { arg1, arg2 });
-    return stream;
+    value arg2 = args[1];
+    return make_shared< stream >(arg1, arg2, caller_env_p);
+  }
+
+  value head_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'head-stream' (must be 1).");
+    value arg1 = eval(args.front(), caller_env_p);
+    shared_ptr< stream > str_p = apply_visitor(stream_visitor(), arg1);
+    return str_p->head();
+  }
+
+  value tail_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'tail-stream' (must be 1).");
+    value arg1 = eval(args.front(), caller_env_p);
+    shared_ptr< stream > str_p = apply_visitor(stream_visitor(), arg1);
+    return str_p->tail();
+  }
+
+  class is_empty_stream_visitor : public static_visitor< bool > {
+  public:
+    bool operator()(const shared_ptr< stream >& str_p) const
+    {
+      return str_p->empty();
+    }
+    template< typename T >
+    bool operator()(const T& t) const
+    {
+      check(false, "argument to 'empty-stream?' must be a stream.");
+    }
+  };
+
+  value is_empty_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, "wrong number of arguments to 'empty-stream?' (must be 1).");
+    value arg = eval(args.front(), caller_env_p);
+    return apply_visitor(is_empty_stream_visitor(), arg);
   }
 
   value print::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -743,8 +756,11 @@ namespace lime {
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());
     env_p->set("elem", make_shared< elem >());
-    env_p->set("delay", make_shared< delay >());
+    env_p->set("empty-stream", make_shared< stream >());
     env_p->set("cons-stream", make_shared< cons_stream >());
+    env_p->set("head-stream", make_shared< head_stream >());
+    env_p->set("tail-stream", make_shared< tail_stream >());
+    env_p->set("empty-stream?", make_shared< is_empty_stream >());
     env_p->set("print", make_shared< print >());
     env_p->set("print-string", make_shared< print_string >());
     env_p->set("print-to-string", make_shared< print_to_string >());

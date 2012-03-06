@@ -24,6 +24,7 @@ namespace lime {
   using std::vector;
 
   // Boost
+  using boost::static_visitor;
   using boost::variant;
 
   class symbol : public basic_string< char > {
@@ -46,12 +47,15 @@ namespace lime {
 
   class lambda;
 
+  class stream;
+
   typedef variant< symbol, 
                    list, 
                    int,
                    string, 
                    bool, 
-                   shared_ptr< lambda >, 
+                   shared_ptr< lambda >,
+                   shared_ptr< stream >,
                    nil > value;
 
   class list : public deque< value > {
@@ -79,6 +83,28 @@ namespace lime {
     vector< symbol > params;
     value expr;
     shared_ptr< environment> creation_env_p;
+  };
+
+  class stream {
+  public:
+    stream() : is_empty(true) {}
+    stream(value h, value t, shared_ptr< environment > ep) : 
+      head_val(h), tail_expr(t), creation_env_p(ep), is_empty(false) {}
+    bool empty() const;
+    value head() const;
+    shared_ptr< stream > tail();
+  private:
+    bool is_empty;
+    value head_val, tail_expr;
+    shared_ptr< environment > creation_env_p;
+    shared_ptr< stream > tail_cache_p;
+  };
+
+  class stream_visitor : public static_visitor< shared_ptr< stream > > {
+  public:
+    shared_ptr< stream > operator()(const shared_ptr< stream >& s_p) const;
+    template< typename T >
+    shared_ptr< stream > operator()(const T& t) const;
   };
 
   ostream& operator<<(ostream& out_stream, const value& val);

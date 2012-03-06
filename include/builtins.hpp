@@ -113,12 +113,22 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
-  class delay : public lambda {
+  class cons_stream : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
-  class cons_stream : public lambda {
+  class head_stream : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class tail_stream : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class is_empty_stream : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };

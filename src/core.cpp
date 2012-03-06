@@ -49,6 +49,36 @@ namespace lime {
     return make_shared< lambda >(pars, expr, env_p);
   }
 
+  bool stream::empty() const
+  {
+    return is_empty;
+  }
+
+  value stream::head() const
+  {
+    return head_val;
+  }
+  
+  shared_ptr< stream > stream_visitor::operator()(const shared_ptr< stream >& s_p) const
+  {
+    return s_p;
+  }
+  
+  template< typename T >
+  shared_ptr< stream > stream_visitor::operator()(const T& t) const 
+  {
+    check(false, "expression does not evaluate to stream.");
+  }
+    
+  shared_ptr< stream > stream::tail()
+  {
+    if (!tail_cache_p) {
+      value tail_value = eval(tail_expr, creation_env_p);
+      tail_cache_p = apply_visitor(stream_visitor(), tail_value);
+    }                         
+    return tail_cache_p;
+  }
+
   class output_visitor : public static_visitor<> {
   public:
     output_visitor(ostream& out) : out_stream(out) {}
@@ -76,6 +106,13 @@ namespace lime {
       if (!l.empty())
         out_stream << l.back();
       out_stream << ")";
+    }
+    void operator()(const shared_ptr< stream >& str_p) const
+    {
+      if (!str_p->empty())
+        out_stream << "(" << str_p->head() << " ...)";
+      else
+        out_stream << "()";
     }
     void operator()(const symbol& sym) const
     {

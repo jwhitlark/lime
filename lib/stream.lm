@@ -1,17 +1,3 @@
-(define (force delayed)
-  (delayed))
-
-(define empty-stream empty)
-
-(define (empty-stream? s)
-  (and (list? s) (empty? s)))
-
-(define (head-stream s)
-  (elem 1 s))
-
-(define (tail-stream s)
-  (force (elem 2 s)))
-
 (define (elem-stream i s)
   (if (= i 1)
       (head-stream s)
@@ -41,13 +27,13 @@
 (define (map-stream f s)
   (if (empty-stream? s)
       empty-stream
-      (cons-stream (f (head s)) (map-stream f (tail-stream s)))))
+      (cons-stream (f (head-stream s)) (map-stream f (tail-stream s)))))
 
 (define (filter-stream p s)
   (if (empty-stream? s)
       empty-stream
       (if (p (head-stream s))
-          (cons-stream (head s) (filter-stream p (tail-stream s)))
+          (cons-stream (head-stream s) (filter-stream p (tail-stream s)))
           (filter-stream p (tail-stream s)))))
 
 (define (fold-stream f i s)
