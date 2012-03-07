@@ -164,9 +164,12 @@ namespace lime {
       }
       else if (sym == "begin") {
         auto inner_env_p = nested_environment(env_p);
-        for (int i = 1; i + 1< expr.size(); ++i)
+        for (int i = 1; i + 1 < expr.size(); ++i)
           eval(expr[i], inner_env_p);
-        return eval(expr.back(), inner_env_p);
+        if (expr.size() > 1)
+          return eval(expr.back(), inner_env_p);
+        else
+          return nil();
       }
       else if (sym == "lambda") {
         check(expr.size() == 3, "wrong number of arguments to 'lambda' (must be 2).");
