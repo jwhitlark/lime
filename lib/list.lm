@@ -8,9 +8,7 @@
       (cons (head l) (init (tail l)))))
 
 (define (last l)
-  (if (= 1 (len l))
-      (head l)
-      (last (tail l))))
+  (elem (len l) l))
 
 (define (map f l)
   (if (empty? l)

@@ -170,6 +170,18 @@ Builtin functions:
     5
     ```
 
+- `len` (return the length of a list)
+
+- `push-front!`, `push-back!`, `pop-front!`, `pop-back!` (in-place modification of lists)
+
+    ```
+    lime> (define l (list 1 2 3 4))
+    lime> (push-front! l 100)
+    (100 1 2 3 4)
+    lime> (pop-back! l)
+    (100 1 2 3)
+    ```
+
 - `print` (print the argument's value, without a newline)
 
     ```
@@ -374,7 +386,6 @@ From `list.lm`:
 
 - `empty` (a short-hand for the empty list)
 - `list?` (true if and only if the argument is a list)
-- `len` (return the length of a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
     ```

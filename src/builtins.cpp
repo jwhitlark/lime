@@ -795,44 +795,6 @@ namespace lime {
     value arg1;
   };
 
-  class push_back_visitor : public static_visitor<> {
-  public:
-    template< typename T>
-    void operator()(list& lst, const T& val) const
-    {
-      lst.push_back(val);
-    }
-    template< typename T>
-    void operator()(shared_ptr< reference >& lst_ref, const T& val) const
-    {
-      value& lst = lst_ref->get_native_ref();
-      value v(val);
-      apply_visitor(push_back_visitor(), lst, v);
-    }
-    template< typename T, typename U>
-    void operator()(T& t, const U& u) const
-    {
-      check(false, 
-            "arguments to 'push-back!' must be a reference to a list and a value.");
-    }
-  };
-
-  class push_back_partial : public lambda {
-  public:
-    push_back_partial(value a1) : arg1(a1) {}
-    value call(vector< value > args, shared_ptr< environment > caller_env_p)
-    {
-      check(args.size() == 1, 
-            "wrong number of arguments to 'push-back! <expr>' (must be 1).");
-      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
-      value arg2 = eval(args.front(), caller_env_p);
-      apply_visitor(push_back_visitor(), list_ref, arg2);
-      return nil();
-    }
-  private:
-    value arg1;
-  };
-
   value push_back::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1 || args.size() == 2,
@@ -843,6 +805,66 @@ namespace lime {
     value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
     value arg2 = eval(args[1], caller_env_p);
     apply_visitor(push_back_visitor(), list_ref, arg2);
+    return nil();
+  }
+
+  class pop_front_visitor : public static_visitor<> {
+  public:
+    void operator()(list& lst) const
+    {
+      lst.pop_front();
+    }
+    template< typename T>
+    void operator()(shared_ptr< reference >& lst_ref) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      apply_visitor(pop_front_visitor(), lst);
+    }
+    template< typename T >
+    void operator()(T& t) const
+    {
+      check(false, 
+            "argument to 'pop-front!' must be a reference to a list.");
+    }
+  };
+
+  value pop_front::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, 
+          "wrong number of arguments to 'pop-front!' (must be 1).");
+    value arg1 = args[0];
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+    apply_visitor(pop_front_visitor(), list_ref);
+    return nil();
+  }
+
+  class pop_back_visitor : public static_visitor<> {
+  public:
+    void operator()(list& lst) const
+    {
+      lst.pop_back();
+    }
+    template< typename T>
+    void operator()(shared_ptr< reference >& lst_ref) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      apply_visitor(pop_back_visitor(), lst);
+    }
+    template< typename T >
+    void operator()(T& t) const
+    {
+      check(false, 
+            "argument to 'pop-back!' must be a reference to a list.");
+    }
+  };
+
+  value pop_back::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1, 
+          "wrong number of arguments to 'pop-back!' (must be 1).");
+    value arg1 = args[0];
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+    apply_visitor(pop_back_visitor(), list_ref);
     return nil();
   }
   
@@ -1017,7 +1039,8 @@ namespace lime {
     env_p->set("set-elem!", make_shared< set_elem >());
     env_p->set("push-front!", make_shared< push_front >());
     env_p->set("push-back!", make_shared< push_back >());
-    // TODO
+    env_p->set("pop-front!", make_shared< pop_front >());
+    env_p->set("pop-back!", make_shared< pop_back >());
     env_p->set("empty-stream", make_shared< stream >());
     env_p->set("cons-stream", make_shared< cons_stream >());
     env_p->set("head-stream", make_shared< head_stream >());
