@@ -31,6 +31,21 @@ namespace lime {
     return deque< value >(begin() + 1, end());
   }
 
+  value reference::get() const
+  {
+    check(env_p->find(sym), "reference to '" + sym + "' undefined.");
+    return env_p->get(sym);
+  }
+
+  void reference::set(value val)
+  {
+    check(env_p->find(sym), "reference to '" + sym + "' undefined.");
+    if (env_p->find_local(sym))
+      env_p->set(sym, val);
+    else
+      env_p->set_outermost(sym, val);
+  }
+
   lambda::lambda(vector< symbol > pars, value x, shared_ptr< environment > e) : 
     expr(x), creation_env_p(e)
   {
@@ -46,16 +61,16 @@ namespace lime {
     }
   }
   
-  class ref_visitor : public static_visitor< reference > {
+  class ref_visitor : public static_visitor< shared_ptr< reference > > {
   public:
     ref_visitor(shared_ptr< environment > ep) : env_p(ep) {}
-    reference operator()(const symbol& sym) const
+    shared_ptr< reference > operator()(const symbol& sym) const
     {
       check(env_p->find(sym), "symbol '" + sym + "' not found.");
-      return reference(sym, env_p);
+      return make_shared< reference >(sym, env_p);
     }
     template< typename T>
-    reference operator()(const T& t) const
+    shared_ptr< reference > operator()(const T& t) const
     {
       check(false, "attempting to get reference to non-symbol.");
     }
@@ -159,10 +174,9 @@ namespace lime {
     {
       out_stream << "lambda at address " << lam_p;
     }
-    void operator()(const reference& ref) const
+    void operator()(const shared_ptr< reference >& ref) const
     {
-      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
-      out_stream << ref.env_p->get(ref.sym);
+      out_stream << ref->get();
     }
   private:
     ostream& out_stream;

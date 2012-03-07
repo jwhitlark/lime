@@ -106,13 +106,9 @@ namespace lime {
   class set_ref_visitor : public static_visitor< bool > {
   public:
     set_ref_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
-    bool operator()(const reference& ref) const
+    bool operator()(const shared_ptr< reference >& ref) const
     {
-      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
-      if (ref.env_p->find_local(ref.sym))
-        ref.env_p->set(ref.sym, eval(expr[2], env_p));
-      else
-        ref.env_p->set_outermost(ref.sym, eval(expr[2], env_p));
+      ref->set(eval(expr[2], env_p));
       return true;
     }
     template< typename T>
@@ -213,10 +209,9 @@ namespace lime {
       value lam_p = eval(lambda_lst, env_p);
       return apply_visitor(lambda_call_visitor(expr, env_p), lam_p);
     }
-    value operator()(const reference& ref) const
+    value operator()(const shared_ptr< reference >& ref) const
     {
-      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
-      return operator()(ref.env_p->get(ref.sym));
+      return operator()(ref->get());
     }
     template< typename T >
     value operator()(const T& t) const
@@ -240,10 +235,9 @@ namespace lime {
     {
       return apply_visitor(operator_visitor(lst, env_p), lst.front());
     }
-    value operator()(const reference& ref) const
+    value operator()(const shared_ptr< reference >& ref) const
     {
-      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
-      return ref.env_p->get(ref.sym);
+      return ref->get();
     }
     template< typename T >
     value operator()(const T& t) const

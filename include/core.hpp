@@ -45,26 +45,20 @@ namespace lime {
 
   class list;
 
+  class reference;
+
   class lambda;
 
   class stream;
 
   class environment;
 
-  class reference {
-  public:
-    explicit reference(const symbol& s, shared_ptr< environment > ep) 
-      : sym(s), env_p(ep) {}
-    symbol sym;
-    shared_ptr< environment > env_p;
-  };
-
   typedef variant< symbol, 
                    list, 
                    int,
                    string, 
                    bool,
-                   reference,
+                   shared_ptr< reference >,
                    shared_ptr< lambda >,
                    shared_ptr< stream >,
                    nil > value;
@@ -79,6 +73,17 @@ namespace lime {
     }
     value head() const;
     list tail() const;
+  };
+
+  class reference {
+  public:
+    explicit reference(const symbol& s, shared_ptr< environment > ep) 
+      : sym(s), env_p(ep) {}
+    value get() const;
+    void set(value val);
+  private:
+    symbol sym;
+    shared_ptr< environment > env_p;
   };
 
   class lambda {
