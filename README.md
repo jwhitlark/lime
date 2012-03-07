@@ -61,9 +61,37 @@ We cannot define a symbol for the first time using `set!`:
     lime> (set! a 42)
     ERROR: argument 'a' to 'set!' is undefined.
 
+The exclamation mark in `set!` is a warning that the function potentially changes the value its argument points to (in functional programming terms, it is *impure*). When you define a function that either does that (we will see shortly how to do that) or redefines a symbol in the external environment, it is a good practice to suffix it with a "!" (however, the language does not enforce this).
+
 - `(if cond expr1 expr2)` (if `cond` evaluates to `true`, returns `expr1`, otherwise `expr2`)
 - `(lambda (param1 param2 ...) expr)` (create an anonymous function)
 - `(define (f param1 param2 ...) expr)` (create a function and assign it to the symbol given as first argument)
+
+To pass an argument by reference, so that its value can be modified, you must prefix it with a "&".
+
+    ```
+    lime> (define (foo! &x y)
+            (begin
+              (set! x "foo")
+              (set! y "foo")))
+    lime> (define a "bar")
+    lime> (define b "bar")
+    lime> (foo a b)
+    lime> a
+    "foo"
+    lime> b
+    "bar"
+    ```
+
+Since the first argument is passed by reference, `a`'s value is modified in the global environment. However, the second argument is passed by value, so the second instruction in the `begin` block only changes a local copy of `b`, not `b` itself.
+
+Of course, an argument that is passed by reference must be a symbol and not a raw value:
+
+    ```
+    lime> (foo! "hey" "hello")
+    ERROR: attempting to get reference to non-symbol.
+    ```
+
 - `true`, `false`
 - `nil` (nothing; nada; nichts)
 
