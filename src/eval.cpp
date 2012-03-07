@@ -103,9 +103,9 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
-  class set_ref_visitor : public static_visitor< bool > {
+  class set_reference_visitor : public static_visitor< bool > {
   public:
-    set_ref_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    set_reference_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
     bool operator()(const shared_ptr< reference >& ref) const
     {
       ref->set(eval(expr[2], env_p));
@@ -128,7 +128,7 @@ namespace lime {
     {
       check(env_p->find(sym), "argument '" + sym + "' to 'set!' is undefined.");
       value val = env_p->get(sym);
-      if (apply_visitor(set_ref_visitor(expr, env_p), val))
+      if (apply_visitor(set_reference_visitor(expr, env_p), val))
         return;
       if (env_p->find_local(sym))
         env_p->set(sym, eval(expr[2], env_p));

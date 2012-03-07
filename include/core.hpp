@@ -81,8 +81,19 @@ namespace lime {
       : sym(s), env_p(ep) {}
     value get() const;
     void set(value val);
-  private:
+    value& get_native_ref() const;
+  private: 
     symbol sym;
+    shared_ptr< environment > env_p;
+  };
+
+  class reference_visitor : public static_visitor< shared_ptr< reference > > {
+  public:
+    reference_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    shared_ptr< reference > operator()(const symbol& sym) const;
+    template< typename T>
+    shared_ptr< reference > operator()(const T& t) const;
+  private:
     shared_ptr< environment > env_p;
   };
 
@@ -137,6 +148,7 @@ namespace lime {
     void set(string str, value val);
     bool find_local(symbol sym);
     void set_outermost(symbol sym, value val);
+    value& get_ref(symbol sym);
     friend shared_ptr< environment > nested_environment(shared_ptr< environment > 
                                                         outer_env_p);
   private:

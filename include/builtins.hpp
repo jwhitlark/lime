@@ -118,6 +118,31 @@ namespace lime {
     value call(vector< value > args, shared_ptr< environment > caller_env_p);
   };
 
+  class set_elem : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };  
+
+  class push_front : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class push_back : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class pop_front : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
+  class pop_back : public lambda {
+  public:
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  };
+
   class cons_stream : public lambda {
   public:
     value call(vector< value > args, shared_ptr< environment > caller_env_p);

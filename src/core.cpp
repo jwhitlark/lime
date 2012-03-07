@@ -46,6 +46,12 @@ namespace lime {
       env_p->set_outermost(sym, val);
   }
 
+  value& reference::get_native_ref() const
+  {
+    check(env_p->find(sym), "reference to '" + sym + "' undefined.");
+    return env_p->get_ref(sym);
+  }
+
   lambda::lambda(vector< symbol > pars, value x, shared_ptr< environment > e) : 
     expr(x), creation_env_p(e)
   {
@@ -61,22 +67,17 @@ namespace lime {
     }
   }
   
-  class ref_visitor : public static_visitor< shared_ptr< reference > > {
-  public:
-    ref_visitor(shared_ptr< environment > ep) : env_p(ep) {}
-    shared_ptr< reference > operator()(const symbol& sym) const
-    {
-      check(env_p->find(sym), "symbol '" + sym + "' not found.");
-      return make_shared< reference >(sym, env_p);
-    }
-    template< typename T>
-    shared_ptr< reference > operator()(const T& t) const
-    {
-      check(false, "attempting to get reference to non-symbol.");
-    }
-  private:
-    shared_ptr< environment > env_p;
-  };
+  shared_ptr< reference > reference_visitor::operator()(const symbol& sym) const
+  {
+    check(env_p->find(sym), "symbol '" + sym + "' not found.");
+    return make_shared< reference >(sym, env_p);
+  }
+  
+  template< typename T>
+  shared_ptr< reference > reference_visitor::operator()(const T& t) const
+  {
+    check(false, "attempting to get reference to non-symbol.");
+  }
 
   value lambda::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
@@ -86,7 +87,7 @@ namespace lime {
     for (int i = 0; i < args.size(); ++i)
       if (reference_arg[i])
         local_env_p->set(params[i],
-                         apply_visitor(ref_visitor(caller_env_p), args[i]));
+                         apply_visitor(reference_visitor(caller_env_p), args[i]));
       else
         local_env_p->set(params[i], eval(args[i], caller_env_p));
     if (args.size() < params.size())
@@ -238,6 +239,13 @@ namespace lime {
     else
       set(sym, val);
   }  
+
+  value& environment::get_ref(symbol sym)
+  {
+    if (values.find(sym) != end(values))
+      return values[sym];
+    return outer_env_p->get_ref(sym);
+  }
 
   shared_ptr< environment > nested_environment(shared_ptr< environment > outer_env_p)
   {

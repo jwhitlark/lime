@@ -31,6 +31,7 @@ namespace lime {
   using lime::nil;
   using lime::output;
   using lime::parse;
+  using lime::reference_visitor;
   using lime::stream_visitor;
   using lime::unescape;
 
@@ -614,13 +615,244 @@ namespace lime {
     value arg2 = eval(args[1], caller_env_p);
     return apply_visitor(elem_visitor(), arg1, arg2);   
   }
+
+  class native_ref_visitor : public static_visitor< value& > {
+  public:
+    native_ref_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    value& operator()(const symbol& sym) const
+    {
+      check(env_p->find(sym), "symbol '" + sym + "' not found.");
+      return env_p->get_ref(sym);
+    }
+    template< typename T>
+    value& operator()(const T& t) const
+    {
+      check(false, "attempting to get reference to non-symbol.");
+    }
+  private:
+    shared_ptr< environment > env_p;
+  };
+
+  class elem_ref_visitor : public static_visitor< value& > {
+  public:
+    value& operator()(list& lst, int i) const
+    {
+      check(i >= 1 && i <= lst.size(), "list index out of range.");
+      return lst[i - 1];
+    }
+    value& operator()(shared_ptr< reference >& lst_ref, int i) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      value i_v(i);
+      return apply_visitor(elem_ref_visitor(), lst, i_v);
+    }
+    template< typename T, typename U >
+    value& operator()(T& t, U u) const
+    {
+      check(false, "arguments to 'set-elem!' must be a reference to a non-empty list, "
+            "an integer index, and a value.");
+    }
+  };
+
+  class set_elem_partial2 : public lambda {
+  public:
+    set_elem_partial2(value& a1, value a2) : arg1(a1), arg2(a2) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, 
+            "wrong number of arguments to 'set-elem! <expr> <expr>' (must be 1).");
+      value arg3 = eval(args.front(), caller_env_p);
+      value& ref = apply_visitor(elem_ref_visitor(), arg1, arg2);
+      ref = arg3;
+      return nil();
+    }
+  private:
+    value& arg1, arg2;
+  };
+
+  class set_elem_partial : public lambda {
+  public:
+    set_elem_partial(value& a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1 || args.size() == 2, 
+            "wrong number of arguments to 'set-elem! <expr>' (must be 1 or 2).");
+      value arg2 = eval(args.front(), caller_env_p);
+      if (args.size() == 1)
+        return make_shared< set_elem_partial2 >(arg1, arg2);
+      value arg3 = eval(args.back(), caller_env_p);
+      value& ref = apply_visitor(elem_ref_visitor(), arg1, arg2);
+      ref = arg3;
+      return nil();
+    }
+  private:
+    value& arg1;
+  };
+
+  value set_elem::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() >= 1 && args.size() <= 3, 
+          "wrong number of arguments to 'set-elem!' (must be 1, 2 or 3).");
+    value arg1 = args[0];
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+    if (args.size() == 1)
+      return make_shared< set_elem_partial >(list_ref);
+    value arg2 = eval(args[1], caller_env_p);
+    if (args.size() == 2)
+      return make_shared< set_elem_partial2 >(list_ref, arg2);
+    value arg3 = eval(args[2], caller_env_p);
+    value& ref = apply_visitor(elem_ref_visitor(), list_ref, arg2);
+    ref = arg3;
+    return nil();
+  }
+
+  class push_front_visitor : public static_visitor<> {
+  public:
+    template< typename T>
+    void operator()(list& lst, const T& val) const
+    {
+      lst.push_front(val);
+    }
+    template< typename T>
+    void operator()(shared_ptr< reference >& lst_ref, const T& val) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      value v(val);
+      apply_visitor(push_front_visitor(), lst, v);
+    }
+    template< typename T, typename U>
+    void operator()(T& t, const U& u) const
+    {
+      check(false, 
+            "arguments to 'push-front!' must be a reference to a list and a value.");
+    }
+  };
+
+  class push_front_partial : public lambda {
+  public:
+    push_front_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, 
+            "wrong number of arguments to 'push-front! <expr>' (must be 1).");
+      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+      value arg2 = eval(args.front(), caller_env_p);
+      apply_visitor(push_front_visitor(), list_ref, arg2);
+      return nil();
+    }
+  private:
+    value arg1;
+  };
+
+  value push_front::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1 || args.size() == 2,
+          "wrong number of arguments to 'push-front!' (must be 1 or 2).");
+    value arg1 = args[0];
+    if (args.size() == 1)
+      return make_shared< push_front_partial >(arg1);
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+    value arg2 = eval(args[1], caller_env_p);
+    apply_visitor(push_front_visitor(), list_ref, arg2);
+    return nil();
+  }
+
+  class push_back_visitor : public static_visitor<> {
+  public:
+    template< typename T>
+    void operator()(list& lst, const T& val) const
+    {
+      lst.push_back(val);
+    }
+    template< typename T>
+    void operator()(shared_ptr< reference >& lst_ref, const T& val) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      value v(val);
+      apply_visitor(push_back_visitor(), lst, v);
+    }
+    template< typename T, typename U>
+    void operator()(T& t, const U& u) const
+    {
+      check(false, 
+            "arguments to 'push-back!' must be a reference to a list and a value.");
+    }
+  };
+
+  class push_back_partial : public lambda {
+  public:
+    push_back_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, 
+            "wrong number of arguments to 'push-back! <expr>' (must be 1).");
+      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+      value arg2 = eval(args.front(), caller_env_p);
+      apply_visitor(push_back_visitor(), list_ref, arg2);
+      return nil();
+    }
+  private:
+    value arg1;
+  };
+
+  class push_back_visitor : public static_visitor<> {
+  public:
+    template< typename T>
+    void operator()(list& lst, const T& val) const
+    {
+      lst.push_back(val);
+    }
+    template< typename T>
+    void operator()(shared_ptr< reference >& lst_ref, const T& val) const
+    {
+      value& lst = lst_ref->get_native_ref();
+      value v(val);
+      apply_visitor(push_back_visitor(), lst, v);
+    }
+    template< typename T, typename U>
+    void operator()(T& t, const U& u) const
+    {
+      check(false, 
+            "arguments to 'push-back!' must be a reference to a list and a value.");
+    }
+  };
+
+  class push_back_partial : public lambda {
+  public:
+    push_back_partial(value a1) : arg1(a1) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p)
+    {
+      check(args.size() == 1, 
+            "wrong number of arguments to 'push-back! <expr>' (must be 1).");
+      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+      value arg2 = eval(args.front(), caller_env_p);
+      apply_visitor(push_back_visitor(), list_ref, arg2);
+      return nil();
+    }
+  private:
+    value arg1;
+  };
+
+  value push_back::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == 1 || args.size() == 2,
+          "wrong number of arguments to 'push-back!' (must be 1 or 2).");
+    value arg1 = args[0];
+    if (args.size() == 1)
+      return make_shared< push_back_partial >(arg1);
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+    value arg2 = eval(args[1], caller_env_p);
+    apply_visitor(push_back_visitor(), list_ref, arg2);
+    return nil();
+  }
   
   class cons_stream_partial : public lambda {
   public:
     cons_stream_partial(value a1) : arg1(a1) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
-      check(args.size() == 1, "wrong number of arguments to 'cons-stream <expr>' (must be 1).");
+      check(args.size() == 1, 
+            "wrong number of arguments to 'cons-stream <expr>' (must be 1).");
       value arg2 = args[1];
       return make_shared< stream >(arg1, arg2, caller_env_p);
     }
@@ -668,7 +900,8 @@ namespace lime {
     }
   };
 
-  value is_empty_stream::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  value is_empty_stream::call(vector< value > args, 
+                              shared_ptr< environment > caller_env_p)
   {
     check(args.size() == 1, "wrong number of arguments to 'empty-stream?' (must be 1).");
     value arg = eval(args.front(), caller_env_p);
@@ -703,9 +936,11 @@ namespace lime {
     return nil();
   }
 
-  value print_to_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  value print_to_string::call(vector< value > args, 
+                              shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 1, "wrong number of arguments to 'print-to-string' (must be 1).");
+    check(args.size() == 1, 
+          "wrong number of arguments to 'print-to-string' (must be 1).");
     stringstream iss;
     output(iss, eval(args[0], caller_env_p));
     return iss.str();
@@ -743,9 +978,11 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
-  value read_from_string::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  value read_from_string::call(vector< value > args, 
+                               shared_ptr< environment > caller_env_p)
   {
-    check(args.size() == 1, "wrong number of arguments to 'read-from-string' (must be 1).");
+    check(args.size() == 1, 
+          "wrong number of arguments to 'read-from-string' (must be 1).");
     value arg1 = eval(args.front(), caller_env_p);
     return apply_visitor(read_from_string_visitor(caller_env_p), arg1);
   }
@@ -777,6 +1014,10 @@ namespace lime {
     env_p->set("head", make_shared< head >());
     env_p->set("tail", make_shared< tail >());
     env_p->set("elem", make_shared< elem >());
+    env_p->set("set-elem!", make_shared< set_elem >());
+    env_p->set("push-front!", make_shared< push_front >());
+    env_p->set("push-back!", make_shared< push_back >());
+    // TODO
     env_p->set("empty-stream", make_shared< stream >());
     env_p->set("cons-stream", make_shared< cons_stream >());
     env_p->set("head-stream", make_shared< head_stream >());
