@@ -81,3 +81,30 @@
   (if (empty? l)
       false
       (or (head l) (any (tail l)))))
+
+(define (concat l1 l2)
+  (begin
+    (define c l1)
+    (for-each
+      (push-back! c)
+      l2)
+    c))
+
+(define (reverse l)
+  (begin
+    (define r empty)
+    (for-each (push-front! r) l)
+    r))
+
+(define (reverse! &l)
+  (begin
+    (define n (len l))
+    (for-each
+      (lambda (i)
+        (begin
+          (define j (+ 1 (- n i)))
+          (define tmp (elem i l))
+          (set-elem! l i (elem j l))
+          (set-elem! l j tmp)))
+      (range 1 (/ n 2)))))
+

@@ -163,7 +163,7 @@ Builtin functions:
 
 - `head` (return the first element of a non-empty list)
 - `tail` (return a list with all elements but the first one)
-- `elem` (return a particular element of a list)
+- `elem` (return a particular element of a list; note: indices start from 1)
 
     ```
     lime> (elem 3 (list 6 2 5 2 8))
@@ -459,6 +459,29 @@ From `list.lm`:
     true
     ```
 
+- `concat` (concatenate two lists)
+
+    ```
+    lime> (concat (range 1 3) (range 4 5))
+    (1 2 3 4 5)
+    ```
+
+- `reverse` (return a list in reverse order)
+
+    ```
+    lime> (reverse (range 1 4))
+    (4 3 2 1)
+    ```
+
+- `reverse!` (reverse a list in-place)
+
+    ```
+    lime> (define l (range 1 4))
+    lime> (reverse! l)
+    lime> l
+    (4 3 2 1)
+    ```
+
 From `stream.lm`:
 
 - `init-stream`, `last-stream` (for finite streams)
@@ -483,7 +506,7 @@ From `stream.lm`:
     (true false true false true)
     ```
 
-<del>this line is here to make github's broken markdown happy</del>
+- `concat-stream`
 
 Credits
 -------

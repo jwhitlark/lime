@@ -223,13 +223,27 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
   
+  class maybe_reference_visitor : public static_visitor< value > {
+  public:
+    value operator()(const shared_ptr< reference >& ref) const
+    {
+      return ref->get();
+    }
+    template< typename T >
+    value operator()(const T& t) const
+    {
+      return t;
+    }
+  };
+
   class eval_visitor : public static_visitor< value > {
   public:
     eval_visitor(shared_ptr< environment > ep) : env_p(ep) {}
     value operator()(const symbol& sym) const
     {
       check(env_p->find(sym), "symbol '" + sym + "' not found.");
-      return env_p->get(sym);
+      value val = env_p->get(sym);
+      return apply_visitor(maybe_reference_visitor(), val);
     }
     value operator()(const list& lst) const
     {

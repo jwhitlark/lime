@@ -656,37 +656,42 @@ namespace lime {
 
   class set_elem_partial2 : public lambda {
   public:
-    set_elem_partial2(value& a1, value a2) : arg1(a1), arg2(a2) {}
+    set_elem_partial2(value a1, value a2, shared_ptr< environment > ep) 
+      : arg1(a1), arg2(a2), env_p(ep) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
       check(args.size() == 1, 
             "wrong number of arguments to 'set-elem! <expr> <expr>' (must be 1).");
+      value& list_ref = apply_visitor(native_ref_visitor(env_p), arg1);
       value arg3 = eval(args.front(), caller_env_p);
-      value& ref = apply_visitor(elem_ref_visitor(), arg1, arg2);
+      value& ref = apply_visitor(elem_ref_visitor(), list_ref, arg2);
       ref = arg3;
       return nil();
     }
   private:
-    value& arg1, arg2;
+    value arg1, arg2;
+    shared_ptr< environment > env_p;
   };
 
   class set_elem_partial : public lambda {
   public:
-    set_elem_partial(value& a1) : arg1(a1) {}
+    set_elem_partial(value a1, shared_ptr< environment > ep) : arg1(a1), env_p(ep) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
       check(args.size() == 1 || args.size() == 2, 
             "wrong number of arguments to 'set-elem! <expr>' (must be 1 or 2).");
       value arg2 = eval(args.front(), caller_env_p);
       if (args.size() == 1)
-        return make_shared< set_elem_partial2 >(arg1, arg2);
+        return make_shared< set_elem_partial2 >(arg1, arg2, env_p);
+      value& list_ref = apply_visitor(native_ref_visitor(env_p), arg1);
       value arg3 = eval(args.back(), caller_env_p);
-      value& ref = apply_visitor(elem_ref_visitor(), arg1, arg2);
+      value& ref = apply_visitor(elem_ref_visitor(), list_ref, arg2);
       ref = arg3;
       return nil();
     }
   private:
-    value& arg1;
+    value arg1;
+    shared_ptr< environment > env_p;
   };
 
   value set_elem::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -694,12 +699,12 @@ namespace lime {
     check(args.size() >= 1 && args.size() <= 3, 
           "wrong number of arguments to 'set-elem!' (must be 1, 2 or 3).");
     value arg1 = args[0];
-    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
     if (args.size() == 1)
-      return make_shared< set_elem_partial >(list_ref);
+      return make_shared< set_elem_partial >(arg1, caller_env_p);
     value arg2 = eval(args[1], caller_env_p);
     if (args.size() == 2)
-      return make_shared< set_elem_partial2 >(list_ref, arg2);
+      return make_shared< set_elem_partial2 >(arg1, arg2, caller_env_p);
+    value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
     value arg3 = eval(args[2], caller_env_p);
     value& ref = apply_visitor(elem_ref_visitor(), list_ref, arg2);
     ref = arg3;
@@ -730,18 +735,19 @@ namespace lime {
 
   class push_front_partial : public lambda {
   public:
-    push_front_partial(value a1) : arg1(a1) {}
+    push_front_partial(value a1, shared_ptr< environment > ep) : arg1(a1), env_p(ep) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
       check(args.size() == 1, 
             "wrong number of arguments to 'push-front! <expr>' (must be 1).");
-      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+      value& list_ref = apply_visitor(native_ref_visitor(env_p), arg1);
       value arg2 = eval(args.front(), caller_env_p);
       apply_visitor(push_front_visitor(), list_ref, arg2);
       return nil();
     }
   private:
     value arg1;
+    shared_ptr< environment > env_p;
   };
 
   value push_front::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -750,7 +756,7 @@ namespace lime {
           "wrong number of arguments to 'push-front!' (must be 1 or 2).");
     value arg1 = args[0];
     if (args.size() == 1)
-      return make_shared< push_front_partial >(arg1);
+      return make_shared< push_front_partial >(arg1, caller_env_p);
     value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
     value arg2 = eval(args[1], caller_env_p);
     apply_visitor(push_front_visitor(), list_ref, arg2);
@@ -781,18 +787,19 @@ namespace lime {
 
   class push_back_partial : public lambda {
   public:
-    push_back_partial(value a1) : arg1(a1) {}
+    push_back_partial(value a1, shared_ptr< environment > ep) : arg1(a1), env_p(ep) {}
     value call(vector< value > args, shared_ptr< environment > caller_env_p)
     {
       check(args.size() == 1, 
             "wrong number of arguments to 'push-back! <expr>' (must be 1).");
-      value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
+      value& list_ref = apply_visitor(native_ref_visitor(env_p), arg1);
       value arg2 = eval(args.front(), caller_env_p);
       apply_visitor(push_back_visitor(), list_ref, arg2);
       return nil();
     }
   private:
     value arg1;
+    shared_ptr< environment > env_p;
   };
 
   value push_back::call(vector< value > args, shared_ptr< environment > caller_env_p)
@@ -801,7 +808,7 @@ namespace lime {
           "wrong number of arguments to 'push-back!' (must be 1 or 2).");
     value arg1 = args[0];
     if (args.size() == 1)
-      return make_shared< push_back_partial >(arg1);
+      return make_shared< push_back_partial >(arg1, caller_env_p);
     value& list_ref = apply_visitor(native_ref_visitor(caller_env_p), arg1);
     value arg2 = eval(args[1], caller_env_p);
     apply_visitor(push_back_visitor(), list_ref, arg2);

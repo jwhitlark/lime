@@ -85,3 +85,15 @@
 
 (define (enum-with f i)
   (cons-stream i (enum-with f (f i))))
+
+(define (concat-stream s1 s2)
+  (if (empty-stream? s1)
+      s2
+      (cons-stream (head-stream s1)
+                   (concat-stream (tail-stream s1) s2))))
+
+(define (reverse-stream s)
+  (if (empty-stream? s)
+      s
+      (cons-stream (last-stream s) 
+                   (reverse-stream (init-stream s)))))
