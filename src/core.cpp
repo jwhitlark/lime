@@ -31,13 +31,49 @@ namespace lime {
     return deque< value >(begin() + 1, end());
   }
 
+  lambda::lambda(vector< symbol > pars, value x, shared_ptr< environment > e) : 
+    expr(x), creation_env_p(e)
+  {
+    for (symbol p: pars) {
+      if (p.front() == '&') {
+        reference_arg.push_back(true);
+        p = symbol(p.substr(1));
+        check(p.size() > 0, "unnamed reference argument.");
+      }
+      else
+        reference_arg.push_back(false);
+      params.push_back(p);
+    }
+  }
+  
+  class ref_visitor : public static_visitor< reference > {
+  public:
+    ref_visitor(shared_ptr< environment > ep) : env_p(ep) {}
+    reference operator()(const symbol& sym) const
+    {
+      check(env_p->find(sym), "symbol '" + sym + "' not found.");
+      return reference(sym, env_p);
+    }
+    template< typename T>
+    reference operator()(const T& t) const
+    {
+      check(false, "attempting to get reference to non-symbol.");
+    }
+  private:
+    shared_ptr< environment > env_p;
+  };
+
   value lambda::call(vector< value > args, shared_ptr< environment > caller_env_p)
   {
     check(args.size() <= params.size(), "too many arguments to lambda.");
     check(args.size() > 0 || params.size() == 0, "lambda called without arguments.");
     auto local_env_p = nested_environment(creation_env_p);
     for (int i = 0; i < args.size(); ++i)
-      local_env_p->set(params[i], eval(args[i], caller_env_p));
+      if (reference_arg[i])
+        local_env_p->set(params[i],
+                         apply_visitor(ref_visitor(caller_env_p), args[i]));
+      else
+        local_env_p->set(params[i], eval(args[i], caller_env_p));
     if (args.size() < params.size())
       return partial(args.size(), local_env_p);
     return eval(expr, local_env_p);
@@ -46,7 +82,8 @@ namespace lime {
   shared_ptr< lambda > lambda::partial(int n_supplied_args, shared_ptr< environment > env_p)
   {
     vector< symbol > pars(begin(params) + n_supplied_args, end(params));
-    return make_shared< lambda >(pars, expr, env_p);
+    vector< bool > ref_arg(begin(reference_arg) + n_supplied_args, end(reference_arg));
+    return make_shared< lambda >(pars, ref_arg, expr, env_p);
   }
 
   bool stream::empty() const
@@ -121,6 +158,11 @@ namespace lime {
     void operator()(const shared_ptr< lambda >& lam_p) const
     {
       out_stream << "lambda at address " << lam_p;
+    }
+    void operator()(const reference& ref) const
+    {
+      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
+      out_stream << ref.env_p->get(ref.sym);
     }
   private:
     ostream& out_stream;

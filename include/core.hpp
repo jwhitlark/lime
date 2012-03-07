@@ -49,11 +49,22 @@ namespace lime {
 
   class stream;
 
+  class environment;
+
+  class reference {
+  public:
+    explicit reference(const symbol& s, shared_ptr< environment > ep) 
+      : sym(s), env_p(ep) {}
+    symbol sym;
+    shared_ptr< environment > env_p;
+  };
+
   typedef variant< symbol, 
                    list, 
                    int,
                    string, 
-                   bool, 
+                   bool,
+                   reference,
                    shared_ptr< lambda >,
                    shared_ptr< stream >,
                    nil > value;
@@ -70,17 +81,18 @@ namespace lime {
     list tail() const;
   };
 
-  class environment;
-
   class lambda {
   public:
     lambda() {}
-    lambda(vector< symbol > pars, value x, shared_ptr< environment > e) : 
-      expr(x), creation_env_p(e), params(pars) {}
+    lambda(vector< symbol > pars, vector< bool > ref_arg, value x, 
+           shared_ptr< environment > e) : params(pars), reference_arg(ref_arg),
+                                          expr(x), creation_env_p(e) {}
+    lambda(vector< symbol > pars, value x, shared_ptr< environment > e);
     virtual value call(vector< value > args, shared_ptr< environment > caller_env_p);
     shared_ptr< lambda > partial(int n_supplied_args, shared_ptr< environment > env_p);
   private:
     vector< symbol > params;
+    vector< bool > reference_arg;
     value expr;
     shared_ptr< environment> creation_env_p;
   };

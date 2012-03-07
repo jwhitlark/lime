@@ -103,12 +103,37 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
+  class set_ref_visitor : public static_visitor< bool > {
+  public:
+    set_ref_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    bool operator()(const reference& ref) const
+    {
+      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
+      if (ref.env_p->find_local(ref.sym))
+        ref.env_p->set(ref.sym, eval(expr[2], env_p));
+      else
+        ref.env_p->set_outermost(ref.sym, eval(expr[2], env_p));
+      return true;
+    }
+    template< typename T>
+    bool operator()(const T& t) const
+    {
+      return false;
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
+  };
+
   class set_visitor : public static_visitor<> {
   public:
     set_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
     void operator()(const symbol& sym) const
     {
       check(env_p->find(sym), "argument '" + sym + "' to 'set!' is undefined.");
+      value val = env_p->get(sym);
+      if (apply_visitor(set_ref_visitor(expr, env_p), val))
+        return;
       if (env_p->find_local(sym))
         env_p->set(sym, eval(expr[2], env_p));
       else
@@ -117,7 +142,7 @@ namespace lime {
     template< typename T >
     void operator()(const T& t) const
     {
-      check(false, "first argument to 'set' must be a symbol.");
+      check(false, "first argument to 'set!' must be a symbol.");
     }
   private:
     list expr;
@@ -183,11 +208,15 @@ namespace lime {
       }
       return nil();
     }
-    // operator must be an anonymous lambda
     value operator()(const list& lambda_lst) const
     {
       value lam_p = eval(lambda_lst, env_p);
       return apply_visitor(lambda_call_visitor(expr, env_p), lam_p);
+    }
+    value operator()(const reference& ref) const
+    {
+      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
+      return operator()(ref.env_p->get(ref.sym));
     }
     template< typename T >
     value operator()(const T& t) const
@@ -210,6 +239,11 @@ namespace lime {
     value operator()(const list& lst) const
     {
       return apply_visitor(operator_visitor(lst, env_p), lst.front());
+    }
+    value operator()(const reference& ref) const
+    {
+      check(ref.env_p->find(ref.sym), "reference to '" + ref.sym + "' undefined.");
+      return ref.env_p->get(ref.sym);
     }
     template< typename T >
     value operator()(const T& t) const
