@@ -69,7 +69,6 @@ The exclamation mark in `set!` is a warning that the function potentially change
 
 To pass an argument by reference, so that its value can be modified, you must prefix it with a "&".
 
-    ```
     lime> (define (foo! &x y)
             (begin
               (set! x "foo")
@@ -81,16 +80,13 @@ To pass an argument by reference, so that its value can be modified, you must pr
     "foo"
     lime> b
     "bar"
-    ```
 
 Since the first argument is passed by reference, `a`'s value is modified in the global environment. However, the second argument is passed by value, so the second instruction in the `begin` block only changes a local copy of `b`, not `b` itself.
 
 Of course, an argument that is passed by reference must be a symbol and not a raw value:
 
-    ```
     lime> (foo! "hey" "hello")
     ERROR: attempting to get reference to non-symbol.
-    ```
 
 - `true`, `false`
 - `nil` (nothing; nada; nichts)
