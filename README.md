@@ -519,7 +519,7 @@ From `list.lm`:
     (1 2 3 4 5)
     ```
 
-- `concat!` (in-place versione)
+- `concat!` (in-place version)
 
    ```
    lime> (define l (list 1 2 3))
