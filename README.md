@@ -446,6 +446,8 @@ From `list.lm`:
     6
     ```
 
+- `map!`, `filter!` (in-place versions)
+
 - `init` (return all the elements of a non-empty list but the last one)
 - `last` (return the last element of a non-empty list)
 
@@ -481,6 +483,8 @@ From `list.lm`:
     (7 9 11)
     ```
 
+- `take!`, `drop!`, `take-while!`, `drop-while!` (in-place versions)
+
 - `zip`, `zip-with` (usual higher-order functions)
 
     ```
@@ -514,6 +518,15 @@ From `list.lm`:
     lime> (concat (range 1 3) (range 4 5))
     (1 2 3 4 5)
     ```
+
+- `concat!` (in-place versione)
+
+   ```
+   lime> (define l (list 1 2 3))
+   lime> (concat! l (list 4 5))
+   lime> l
+   (1 2 3 4 5)
+   ```
 
 - `reverse` (return a list in reverse order)
 

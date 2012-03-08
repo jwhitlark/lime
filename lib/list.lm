@@ -90,6 +90,11 @@
       l2)
     c))
 
+(define (concat! &l1 l2)
+  (for-each
+    (push-back! l1)
+  l2))
+
 (define (swap! &l i j)
   (begin
     (define tmp (elem i l))
@@ -193,10 +198,28 @@
       (set-elem! l i (f (elem i l))))
     (range 1 (len l))))
 
+(define (filter! p &l)
+  (set! l (filter p l)))
+
 (define (take! n &l)
   (do (- (len l) n) 
     (pop-back! l)))
 
 (define (drop! n &l)
   (do n 
+    (pop-front! l)))
+
+(define (take-while! p &l)
+  (begin
+    (define k 0)
+    (define i 1)
+    (while (p (elem i l))
+      (begin
+        (set! k (+ k 1))
+        (set! i (+ i 1))))
+    (do (- (len l) k)
+      (pop-back! l))))
+
+(define (drop-while! p &l)
+  (while (p (head l))
     (pop-front! l)))
