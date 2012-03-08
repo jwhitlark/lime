@@ -112,3 +112,78 @@
           (swap! l i j)))
       (range 1 (/ n 2)))))
 
+(define (shuffle! &l)
+  (begin
+    (define n (len l))
+    (for-each
+      (lambda (i)
+        (swap! l i (+ i (randint 0 (- n i)))))
+      (range 1 n))))
+
+(define (shuffle l)
+  (begin
+    (define s l)
+    (shuffle! s)
+    s))
+
+(define (sample k l)
+  (begin
+    (define n (len l))
+    (define s empty)
+    (for-each
+      (lambda (i)
+        (if (<= (randint 1 (+ 1 (- n i)))
+                (- k (len s)))
+            (push-back! s (elem i l))
+            nil))
+      (range 1 n))
+    s))
+
+(define (sort-by cmp l)
+  (if (<= (len l) 1)
+      l
+      (begin
+        (define n (len l))
+        (define p (randint 1 n))
+        (define pv (elem p l))
+        (define lesser empty)
+        (define greater empty)
+        (for-each
+          (lambda (i)
+            (begin
+              (define x (elem i l))
+              (if (cmp x pv)    
+                  (push-back! lesser x)
+                  (push-back! greater x))))
+          (filter (!= p) (range 1 (len l))))
+        (concat (sort-by cmp lesser)
+                (cons pv (sort-by cmp greater))))))
+
+(define (partition! cmp &l left right p)
+  (begin
+    (define pv (elem p l))
+    (swap! l p right)
+    (define q left)
+    (for-each
+      (lambda (i)
+        (if (cmp (elem i l) pv)
+            (begin 
+              (swap! l i q)
+              (set! q (+ q 1)))
+            nil))
+      (range left (- right 1)))
+    (swap! l q right)
+    q))
+
+(define (quicksort! cmp &l left right)
+  (if (< left right)
+    (begin
+      (define p (randint left right))
+      (define p' (partition! cmp l left right p))
+      (quicksort! cmp l left (- p' 1))
+      (quicksort! cmp l (+ p' 1) right))
+    nil))
+
+(define (sort-by! cmp &l)
+  (quicksort! cmp l 1 (len l)))
+    

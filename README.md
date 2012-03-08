@@ -339,6 +339,13 @@ From `numeric.lm`:
     (1 2 3 4 5)
     ```
 
+- `randint` (draw an integer from a range uniformly at random)
+
+    ```
+    lime> (randint 1 100)
+    87
+    ```
+
 - `range-stream` (useful for large ranges)
 - `square`, `pow`, `fact`
 
@@ -351,6 +358,24 @@ From `numeric.lm`:
     ```
 
 - `add-stream`
+
+- `sort` (return a list of integers in increasing sorted order)
+
+    ```
+    lime> (define r (shuffle (range 1 10)))
+    lime> r
+    (4 1 7 3 5 6 8 2 10 9)
+    lime> (sort r)
+    (1 2 3 4 5 6 7 8 9 10)
+    ```
+
+- `sort!` (in-place version)
+
+    ```
+    lime> (sort! r)
+    lime> r
+    (1 2 3 4 5 6 7 8 9 10)
+    ```
 
 From `logic.lm`:
 
@@ -480,6 +505,40 @@ From `list.lm`:
     lime> (reverse! l)
     lime> l
     (4 3 2 1)
+    ```
+
+- `sort-by` (return a list in sorted order, using a custom comparison function)
+
+    ```
+    lime> (sort-by > (list 8 3 4 2 0 4 3))
+    (8 4 4 3 3 2 0)
+    ```
+
+- `sort-by!` (in-place version)
+
+- `swap!` (swap two elements in a list)
+
+    ```
+    lime> (define l (list "a" "b" "c" "d"))
+    lime> (swap! l 1 3)
+    lime> l
+    ("c" "b" "a" "d")
+    ```
+
+- `shuffle` (random permutation of a list)
+
+    ```
+    lime> (shuffle (range 1 10))
+    sort-by! (list.lm)
+    ```
+
+- `shuffle!` (in-place version)
+
+- `sample` (extract a random k-sample from a list)
+
+    ```
+    lime> (sample 5 (range 1 100))
+    (59 70 85 86 94)
     ```
 
 From `stream.lm`:
