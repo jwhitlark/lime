@@ -197,13 +197,18 @@ namespace lime {
                                      "begin", 
                                      "lambda" }; 
 
-  bool keyword_follows(const string& code, int pos)
+  bool align_arguments(const string& code, int pos)
   {
     string rest(code.substr(pos + 1));
     istringstream iss(rest);
-    string op;
-    iss >> op;
-    return keywords.find(op) != keywords.end();
+    string op, arg;
+    iss >> op >> arg;
+    if (keywords.find(op) != keywords.end())
+      return false;
+    for (char c: arg)
+      if (c != ' ' && c != '\n')
+        return true;
+    return false;
   }
 
   int operator_length(const string& code, int pos)
@@ -225,11 +230,11 @@ namespace lime {
       if (code[i] == '"')
         string_expr = !string_expr;
       else if (code[i] == '(' && !string_expr) {
-        if (keyword_follows(code, i))
-          open_parens.push(initial_indent + i + indent_length);
-        else
+        if (align_arguments(code, i))
           open_parens.push(initial_indent + i + operator_length(code, i) 
                            + indent_length);
+        else
+          open_parens.push(initial_indent + i + indent_length);
       }
       else if (code[i] == ')' && !string_expr)
         open_parens.pop();
