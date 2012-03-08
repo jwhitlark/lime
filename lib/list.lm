@@ -90,6 +90,12 @@
       l2)
     c))
 
+(define (swap! &l i j)
+  (begin
+    (define tmp (elem i l))
+    (set-elem! l i (elem j l))
+    (set-elem! l j tmp)))
+
 (define (reverse l)
   (begin
     (define r empty)
@@ -103,8 +109,6 @@
       (lambda (i)
         (begin
           (define j (+ 1 (- n i)))
-          (define tmp (elem i l))
-          (set-elem! l i (elem j l))
-          (set-elem! l j tmp)))
+          (swap! l i j)))
       (range 1 (/ n 2)))))
 

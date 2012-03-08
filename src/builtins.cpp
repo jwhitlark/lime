@@ -580,10 +580,18 @@ namespace lime {
 
   class elem_visitor : public static_visitor< value > {
   public:
-    value operator()(const int i, const list& lst) const
+    value operator()(int i, const list& lst) const
     {
       check(i >= 1 && i <= lst.size(), "list index out of range.");
       return lst[i - 1];
+    }
+    value operator()(const int i, const symbol& sym) const
+    {
+      check(false, "SYMBOL!");
+    }
+    value operator()(const int i, const shared_ptr<reference>& sym) const
+    {
+      check(false, "REF!");
     }
     template< typename T, typename U >
     value operator()(const T& t, const U& u) const

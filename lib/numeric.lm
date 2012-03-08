@@ -84,3 +84,33 @@
 (define (fact n)
   (product (range 1 n)))
 
+(define (randint a b)
+  (begin
+    (define m (+ 1 (- b a)))
+    (define bound (- rand-max (% rand-max m)))
+    (define r (% (random) bound))
+    (if (< r bound)
+        (+ a (% r m))
+        (randint a b))))
+
+(define (sort-by cmp l)
+  (if (<= (len l) 1)
+      l
+      (begin
+        (define n (len l))
+        (define p (randint 1 n))
+        (define pv (elem p l))
+        (define lesser empty)
+        (define greater empty)
+        (for-each
+          (lambda (i)
+            (begin
+              (define x (elem i l))
+              (if (cmp x pv)    
+                  (push-back! lesser x)
+                  (push-back! greater x))))
+          (filter (!= p) (range 1 (len l))))
+        (concat (sort-by cmp lesser)
+                (cons pv (sort-by cmp greater))))))
+
+(define sort (sort-by <))

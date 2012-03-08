@@ -67,10 +67,28 @@ namespace lime {
     }
   }
   
+  class make_reference_visitor : public static_visitor< shared_ptr< reference > > {
+  public:
+    make_reference_visitor(symbol s, shared_ptr< environment > ep) : sym(s), env_p(ep) {}
+    shared_ptr< reference > operator()(const shared_ptr< reference >& ref) const
+    {
+      return ref;
+    }
+    template< typename T>
+    shared_ptr< reference > operator()(const T& val) const
+    {
+      return make_shared< reference >(sym, env_p);
+    }
+  private:
+    symbol sym;
+    shared_ptr< environment > env_p;
+  };
+
   shared_ptr< reference > reference_visitor::operator()(const symbol& sym) const
   {
     check(env_p->find(sym), "symbol '" + sym + "' not found.");
-    return make_shared< reference >(sym, env_p);
+    value val(env_p->get(sym));
+    return apply_visitor(make_reference_visitor(sym, env_p), val);
   }
   
   template< typename T>
