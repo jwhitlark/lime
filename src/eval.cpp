@@ -163,6 +163,27 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
+  class while_visitor : public static_visitor<> {
+  public:
+    while_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    void operator()(bool b) const
+    {
+      if (b) {
+        eval(expr[2], env_p);
+        value cond = eval(expr[1], env_p);
+        apply_visitor(while_visitor(expr, env_p), cond);
+      }
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "first argument to 'while' must evaluate to boolean.");
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
+  };
+
   class operator_visitor : public static_visitor< value > {
   public:
     operator_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}    
@@ -191,6 +212,11 @@ namespace lime {
           return eval(expr.back(), inner_env_p);
         else
           return nil();
+      }
+      else if (sym == "while") {
+        check(expr.size() == 3, "wrong number of arguments to 'while' (must be 2).");
+        value cond = eval(expr[1], env_p);
+        apply_visitor(while_visitor(expr, env_p), cond);
       }
       else if (sym == "lambda") {
         check(expr.size() == 3, "wrong number of arguments to 'lambda' (must be 2).");

@@ -93,6 +93,20 @@ Of course, an argument that is passed by reference must be a symbol and not a ra
 
 Supported variable types: int, string, bool, lambda, list, nil
 
+- `while <cond> <expr>` (evaluate an expression as long as the condition evaluates to true)
+
+    ```
+    lime> (define i 1)
+    lime> (while (< i 5)
+            (begin
+              (println i)
+              (set! i (+ i 1))))
+    1
+    2
+    3
+    4
+    ```
+
 Builtin functions:
 
 - `list` (create a list with the arguments as elements)
