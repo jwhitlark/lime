@@ -196,7 +196,8 @@ namespace lime {
   unordered_set< string > keywords { "define", 
                                      "begin", 
                                      "lambda",
-                                     "while" }; 
+                                     "while",
+                                     "do" }; 
 
   bool align_arguments(const string& code, int pos)
   {

@@ -184,6 +184,24 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
+  class do_visitor : public static_visitor<> {
+  public:
+    do_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    void operator()(int times) const
+    {
+      for (int i = 0; i < times; ++i)
+        eval(expr[2], env_p);
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "first argument to 'do' must evaluate to integer.");
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
+  };
+
   class operator_visitor : public static_visitor< value > {
   public:
     operator_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}    
@@ -217,6 +235,11 @@ namespace lime {
         check(expr.size() == 3, "wrong number of arguments to 'while' (must be 2).");
         value cond = eval(expr[1], env_p);
         apply_visitor(while_visitor(expr, env_p), cond);
+      }
+      else if (sym == "do") {
+        check(expr.size() == 3, "wrong number of arguments to 'do' (must be 2).");
+        value times = eval(expr[1], env_p);
+        apply_visitor(do_visitor(expr, env_p), times);
       }
       else if (sym == "lambda") {
         check(expr.size() == 3, "wrong number of arguments to 'lambda' (must be 2).");

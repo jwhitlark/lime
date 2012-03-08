@@ -107,6 +107,16 @@ Supported variable types: int, string, bool, lambda, list, nil
     4
     ```
 
+- `do <times> <expr>` (evaluate an expression a fixed number of times)
+
+    ```
+    lime> (do 3
+            (println-string "hello!"))
+    hello!
+    hello!
+    hello!
+    ```
+
 Builtin functions:
 
 - `list` (create a list with the arguments as elements)
