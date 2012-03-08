@@ -58,11 +58,20 @@ namespace lime {
     for (symbol p: pars) {
       if (p.front() == '&') {
         reference_arg.push_back(true);
+        delayed_arg.push_back(false);
         p = symbol(p.substr(1));
         check(p.size() > 0, "unnamed reference argument.");
       }
-      else
+      else if (p.front() == '$') {
         reference_arg.push_back(false);
+        delayed_arg.push_back(true);
+        p = symbol(p.substr(1));
+        check(p.size() > 0, "unnamed delayed argument.");
+      }
+      else {
+        reference_arg.push_back(false);
+        delayed_arg.push_back(false);
+      }
       params.push_back(p);
     }
   }
@@ -106,6 +115,8 @@ namespace lime {
       if (reference_arg[i])
         local_env_p->set(params[i],
                          apply_visitor(reference_visitor(caller_env_p), args[i]));
+      else if (delayed_arg[i])
+        local_env_p->set(params[i], make_shared< delayed >(args[i], caller_env_p));
       else
         local_env_p->set(params[i], eval(args[i], caller_env_p));
     if (args.size() < params.size())
@@ -117,37 +128,17 @@ namespace lime {
   {
     vector< symbol > pars(begin(params) + n_supplied_args, end(params));
     vector< bool > ref_arg(begin(reference_arg) + n_supplied_args, end(reference_arg));
-    return make_shared< lambda >(pars, ref_arg, expr, env_p);
+    vector< bool > del_arg(begin(delayed_arg) + n_supplied_args, end(delayed_arg));
+    return make_shared< lambda >(pars, ref_arg, del_arg, expr, env_p);
   }
 
-  bool stream::empty() const
+  value delayed::force()
   {
-    return is_empty;
-  }
-
-  value stream::head() const
-  {
-    return head_val;
-  }
-  
-  shared_ptr< stream > stream_visitor::operator()(const shared_ptr< stream >& s_p) const
-  {
-    return s_p;
-  }
-  
-  template< typename T >
-  shared_ptr< stream > stream_visitor::operator()(const T& t) const 
-  {
-    check(false, "expression does not evaluate to stream.");
-  }
-    
-  shared_ptr< stream > stream::tail()
-  {
-    if (!tail_cache_p) {
-      value tail_value = eval(tail_expr, creation_env_p);
-      tail_cache_p = apply_visitor(stream_visitor(), tail_value);
-    }                         
-    return tail_cache_p;
+    if (!already_run) {
+      cache = eval(expr, env_p);
+      already_run = true;
+    }
+    return cache;
   }
 
   class output_visitor : public static_visitor<> {
@@ -178,12 +169,9 @@ namespace lime {
         out_stream << l.back();
       out_stream << ")";
     }
-    void operator()(const shared_ptr< stream >& str_p) const
+    void operator()(const shared_ptr< delayed >& del) const
     {
-      if (!str_p->empty())
-        out_stream << "(" << str_p->head() << " ...)";
-      else
-        out_stream << "()";
+      out_stream << "...";
     }
     void operator()(const symbol& sym) const
     {

@@ -49,7 +49,7 @@ namespace lime {
 
   class lambda;
 
-  class stream;
+  class delayed;
 
   class environment;
 
@@ -60,7 +60,7 @@ namespace lime {
                    bool,
                    shared_ptr< reference >,
                    shared_ptr< lambda >,
-                   shared_ptr< stream >,
+                   shared_ptr< delayed >,
                    nil > value;
 
   class list : public deque< value > {
@@ -100,39 +100,30 @@ namespace lime {
   class lambda {
   public:
     lambda() {}
-    lambda(vector< symbol > pars, vector< bool > ref_arg, value x, 
-           shared_ptr< environment > e) : params(pars), reference_arg(ref_arg),
-                                          expr(x), creation_env_p(e) {}
+    lambda(vector< symbol > pars, vector< bool > ref_arg, vector< bool > del_arg,
+           value x, shared_ptr< environment > e) 
+      : params(pars), reference_arg(ref_arg), delayed_arg(del_arg), expr(x), 
+        creation_env_p(e) {}
     lambda(vector< symbol > pars, value x, shared_ptr< environment > e);
     virtual value call(vector< value > args, shared_ptr< environment > caller_env_p);
     shared_ptr< lambda > partial(int n_supplied_args, shared_ptr< environment > env_p);
   private:
     vector< symbol > params;
-    vector< bool > reference_arg;
+    vector< bool > reference_arg, delayed_arg;
     value expr;
     shared_ptr< environment> creation_env_p;
   };
 
-  class stream {
+  class delayed {
   public:
-    stream() : is_empty(true) {}
-    stream(value h, value t, shared_ptr< environment > ep) : 
-      head_val(h), tail_expr(t), creation_env_p(ep), is_empty(false) {}
-    bool empty() const;
-    value head() const;
-    shared_ptr< stream > tail();
+    delayed(value x, shared_ptr< environment > ep) : expr(x), env_p(ep),
+                                                     already_run(false) {}
+    value force();
   private:
-    bool is_empty;
-    value head_val, tail_expr;
-    shared_ptr< environment > creation_env_p;
-    shared_ptr< stream > tail_cache_p;
-  };
-
-  class stream_visitor : public static_visitor< shared_ptr< stream > > {
-  public:
-    shared_ptr< stream > operator()(const shared_ptr< stream >& s_p) const;
-    template< typename T >
-    shared_ptr< stream > operator()(const T& t) const;
+    value expr;
+    shared_ptr< environment > env_p;
+    bool already_run;
+    value cache;
   };
 
   ostream& operator<<(ostream& out_stream, const value& val);

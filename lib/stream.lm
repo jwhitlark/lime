@@ -1,3 +1,14 @@
+(define empty-stream empty)
+
+(define empty-stream? empty?)
+
+(define (cons-stream h $t)
+  (list h t))
+
+(define head-stream head)
+
+(define tail-stream (compose force (elem 2)))
+
 (define (elem-stream i s)
   (if (= i 1)
       (head-stream s)

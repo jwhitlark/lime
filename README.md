@@ -88,6 +88,21 @@ Of course, an argument that is passed by reference must be a symbol and not a ra
     lime> (foo! "hey" "hello")
     ERROR: attempting to get reference to non-symbol.
 
+We can also selectively delay the evaluation of certain arguments by prefixing them with '$'. A delayed argument can be evaluated when needed by calling `force` on it:
+
+    lime> (define (my-and a $b)
+            (if a (force b) false))
+    lime> (define (starts-with-zero? l)
+            (my-and (not (empty? l)) (= 0 (head l))))
+    lime> (starts-with-zero? empty)
+    false
+    lime> (starts-with-zero? (list 1 2))
+    false
+    lime> (starts-with-zero? (list 0))
+    true
+    
+Notice that, if `b` had not been passed as a delayed argument, the expression `(head l)` would have been evaluated on an empty list, resulting in an error.
+
 - `true`, `false`
 - `nil` (nothing; nada; nichts)
 
@@ -155,6 +170,20 @@ Builtin functions:
     lime> (eval foo)
     9
     ```
+
+- `delay` (delay the evaluation of an expression)
+- `force` (force the evaluation of a delayed computation)
+
+    ```
+    lime> (define x (delay (+ y 1)))
+    lime> x
+    ...
+    lime> (define y 5)
+    lime> x
+    6
+    ```
+
+There are two differences between using `quote`/`eval` and using `delay`/`force`: first of all, a delayed expression captures the environment it is created in; moreover, after the first call to `force` on a delayed computation, its result is cached so it doesn't need to be computed again. This is important for writing efficient algorithms on infinite streams.
 
 - `load` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
