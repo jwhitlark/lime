@@ -829,7 +829,6 @@ namespace lime {
     {
       lst.pop_front();
     }
-    template< typename T>
     void operator()(shared_ptr< reference >& lst_ref) const
     {
       value& lst = lst_ref->get_native_ref();
@@ -859,7 +858,6 @@ namespace lime {
     {
       lst.pop_back();
     }
-    template< typename T>
     void operator()(shared_ptr< reference >& lst_ref) const
     {
       value& lst = lst_ref->get_native_ref();

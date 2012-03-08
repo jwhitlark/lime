@@ -187,3 +187,16 @@
 (define (sort-by! cmp &l)
   (quicksort! cmp l 1 (len l)))
     
+(define (map! f &l)
+  (for-each
+    (lambda (i)
+      (set-elem! l i (f (elem i l))))
+    (range 1 (len l))))
+
+(define (take! n &l)
+  (do (- (len l) n) 
+    (pop-back! l)))
+
+(define (drop! n &l)
+  (do n 
+    (pop-front! l)))
