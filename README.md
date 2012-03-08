@@ -194,7 +194,6 @@ There are two differences between using `quote`/`eval` and using `delay`/`force`
 - `=` (works with any builtin type, including lists)
 - `<`, `+`, `-`, `*`, `/`, `%` (all binary operators for int)
 - `random`, `rand-max` (`random` returns a pseudo-random integer between 0 and `rand-max` included)
-- `and`, `or` (short-circuited logical operators)
 - `atom?` (true if the argument is anything but a list)
 - `empty?` (returns whether a list is empty)
 
@@ -323,25 +322,6 @@ This applies to functions of any number of arguments:
     lime> (sum2 (list 1 2 3))
     6
 
-The language also provides lazy-evaluated, memoized streams as an alternative to lists:
-
-- `empty-stream`
-- `empty-stream?`
-- `cons-stream` (construct a stream from an element and a tail stream)
-- `head-stream`, `tail-stream`
-
-For example, this is how we build an infinite stream of ones:
-
-    lime> (define ones (cons-stream 1 ones))
-    lime> ones
-    (1 ...)
-    lime> (tail-stream ones)
-    (1 ...)
-    lime> (tail-stream (tail-stream ones))
-    (1 ...)
-
-All the remaining functionality is provided in the standard library, as we shall see.
-
 Library functions:
 
 From `io.lm`:
@@ -432,6 +412,7 @@ From `numeric.lm`:
 
 From `logic.lm`:
 
+- `and`, `or` (short-circuited logical operators)
 - `not`, `xor`
 
 From `functional.lm`:
@@ -608,6 +589,21 @@ From `list.lm`:
     ```
 
 From `stream.lm`:
+
+- `empty-stream`
+- `empty-stream?`
+- `cons-stream` (construct a stream from an element and a tail stream)
+- `head-stream`, `tail-stream`
+
+For example, this is how we build an infinite stream of ones:
+
+    lime> (define ones (cons-stream 1 ones))
+    lime> ones
+    (1 ...)
+    lime> (tail-stream ones)
+    (1 ...)
+    lime> (tail-stream (tail-stream ones))
+    (1 ...)
 
 - `init-stream`, `last-stream` (for finite streams)
 - `elem-stream`
