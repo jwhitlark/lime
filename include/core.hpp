@@ -49,6 +49,8 @@ namespace lime {
 
   class lambda;
 
+  class macro;
+
   class delayed;
 
   class environment;
@@ -60,6 +62,7 @@ namespace lime {
                    bool,
                    shared_ptr< reference >,
                    shared_ptr< lambda >,
+                   shared_ptr< macro >,
                    shared_ptr< delayed >,
                    nil > value;
 
@@ -114,6 +117,15 @@ namespace lime {
     shared_ptr< environment> creation_env_p;
   };
 
+  class macro {
+  public:
+    macro(vector< symbol > pars, value x) : params(pars), expr(x) {}
+    value call(vector< value > args, shared_ptr< environment > caller_env_p);
+  private:
+    vector< symbol > params;
+    value expr;
+  };
+
   class delayed {
   public:
     delayed(value x, shared_ptr< environment > ep) : expr(x), env_p(ep),
@@ -142,7 +154,7 @@ namespace lime {
     value& get_ref(symbol sym);
     friend shared_ptr< environment > nested_environment(shared_ptr< environment > 
                                                         outer_env_p);
-  private:
+  protected:
     shared_ptr< environment > outer_env_p;
     unordered_map< symbol, value, symbol_hash > values;
   };

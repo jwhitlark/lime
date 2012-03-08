@@ -4,6 +4,7 @@
 // lime headers
 #include <core.hpp>
 #include <eval.hpp>
+#include <expand.hpp>
 #include <interpreter.hpp>
 #include <parse.hpp>
 
@@ -20,6 +21,7 @@ namespace lime {
   using lime::check;
   using lime::escape;
   using lime::eval;
+  using lime::expand;
 
   value list::head() const
   {
@@ -131,6 +133,13 @@ namespace lime {
     vector< bool > del_arg(begin(delayed_arg) + n_supplied_args, end(delayed_arg));
     return make_shared< lambda >(pars, ref_arg, del_arg, expr, env_p);
   }
+  
+  value macro::call(vector< value > args, shared_ptr< environment > caller_env_p)
+  {
+    check(args.size() == params.size(), "wrong number of arguments to macro.");
+    value expanded_expr(expand(expr, params, args));
+    return eval(expanded_expr, caller_env_p);
+  }
 
   value delayed::force()
   {
@@ -180,6 +189,10 @@ namespace lime {
     void operator()(const shared_ptr< lambda >& lam_p) const
     {
       out_stream << "lambda at address " << lam_p;
+    }
+    void operator()(const shared_ptr< macro >& mac_p) const
+    {
+      out_stream << "macro at address " << mac_p;
     }
     void operator()(const shared_ptr< reference >& ref) const
     {

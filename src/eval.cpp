@@ -41,7 +41,8 @@ namespace lime {
     template< typename T >
     symbol operator()(const T& t) const
     {
-      check(false, "parameter-list in lambda definition must only contain symbols.");
+      check(false, 
+            "parameter-list in lambda or macro definition must only contain symbols.");
     }
   };
 
@@ -96,7 +97,7 @@ namespace lime {
     template< typename T >
     void operator()(const T& t) const
     {
-      check(false, "first argument to 'define' must be a symbol.");
+      check(false, "first argument to 'define' must be a symbol or list.");
     }
   private:
     list expr;
@@ -145,18 +146,65 @@ namespace lime {
     shared_ptr< environment > env_p;
   };
 
-  class lambda_call_visitor : public static_visitor< value > {
+  class function_call_visitor : public static_visitor< value > {
   public:
-    lambda_call_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    function_call_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
     value operator()(const shared_ptr< lambda >& lam_p) const
     {
       vector< value > args(begin(expr) + 1, end(expr));
       return lam_p->call(args, env_p);
     }
+    value operator()(const shared_ptr< macro >& mac_p) const
+    {
+      vector< value > args(begin(expr) + 1, end(expr));
+      return mac_p->call(args, env_p);
+    }
     template< typename T>
     value operator()(const T& t) const
     {
-      check(false, "first element of a list must be a lambda or builtin operator.");
+      check(false, "first element of a list must be a lambda, macro or builtin operator.");
+    }
+  private:
+    list expr;
+    shared_ptr< environment > env_p;
+  };
+
+  class macro_params_visitor : public static_visitor< vector< symbol > > {
+  public:
+    vector< symbol > operator()(const list& lst) const
+    {
+      vector< symbol > params(lst.size());
+      transform(begin(lst), end(lst), begin(params), [](value v) {
+          return apply_visitor(parameter_visitor(), v);
+        });
+      return params;
+    }
+    template< typename T >
+    vector< symbol > operator()(const T& t) const
+    {
+      check(false, 
+            "first argument to 'defmacro' must be a list with the macro's name followed "
+            "by the parameters' names.");
+    }
+  };
+
+  class defmacro_visitor : public static_visitor<> {
+  public:
+    defmacro_visitor(list x, shared_ptr< environment > ep) : expr(x), env_p(ep) {}
+    void operator()(const list& lst) const
+    {
+      check(lst.size() >= 0, "syntax error in 'defmacro'.");
+      value sym_v = lst.head();
+      symbol sym = apply_visitor(function_name_visitor(), sym_v);
+      check(!env_p->find_local(sym), "attempting to redefine symbol '" + sym + "'.");
+      value params_v = lst.tail();
+      vector< symbol > params = apply_visitor(macro_params_visitor(), params_v);
+      env_p->set(sym, make_shared< macro >(params, expr[2]));
+    }
+    template< typename T >
+    void operator()(const T& t) const
+    {
+      check(false, "first argument to 'defmacro' must be a list.");
     }
   private:
     list expr;
@@ -246,17 +294,21 @@ namespace lime {
         vector< symbol > params = apply_visitor(lambda_params_visitor(), expr[1]);
         return make_shared< lambda >(params, expr[2], env_p);
       }
-      else { // sym must refer to a lambda
-        lambda_call_visitor visitor(expr, env_p);
-        value lam_v = eval(value(sym), env_p);
-        return apply_visitor(visitor, lam_v);
+      else if (sym == "defmacro") {
+        check(expr.size() == 3, "wrong number of arguments to 'defmacro' (must be 2).");
+        apply_visitor(defmacro_visitor(expr, env_p), expr[1]);
+      }
+      else { // sym must refer to a lambda or macro
+        function_call_visitor visitor(expr, env_p);
+        value func_v = eval(value(sym), env_p);
+        return apply_visitor(visitor, func_v);
       }
       return nil();
     }
     value operator()(const list& lambda_lst) const
     {
       value lam_p = eval(lambda_lst, env_p);
-      return apply_visitor(lambda_call_visitor(expr, env_p), lam_p);
+      return apply_visitor(function_call_visitor(expr, env_p), lam_p);
     }
     value operator()(const shared_ptr< reference >& ref) const
     {

@@ -196,6 +196,7 @@ namespace lime {
   unordered_set< string > keywords { "define", 
                                      "begin", 
                                      "lambda",
+                                     "defmacro",
                                      "while",
                                      "do" }; 
 
