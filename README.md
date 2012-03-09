@@ -546,6 +546,15 @@ From `list.lm`:
     true
     ```
 
+- `contains`
+
+    ```
+    lime> (contains 5 (range 1 10))
+    true
+    lime> (contains 12 (range 1 10))
+    false
+    ```
+
 - `concat` (concatenate two lists)
 
     ```

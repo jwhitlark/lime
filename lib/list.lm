@@ -82,6 +82,11 @@
       false
       (or (head l) (any (tail l)))))
 
+(define (contains x l)
+  (and (not (empty? l)) 
+       (or (= x (head l)) 
+           (contains x (tail l)))))
+
 (define (concat l1 l2)
   (begin
     (define c l1)
