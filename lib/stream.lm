@@ -52,13 +52,6 @@
       i
       (fold-stream f (f i (head-stream s)) (tail-stream s))))
 
-(define (for-each-stream f s)
-  (if (empty-stream? s)
-      nil
-      (begin
-        (f (head-stream s))
-        (for-each-stream f (tail-stream s)))))
-
 (define (take-stream n s)
   (if (= n 0)
       empty-stream
@@ -97,14 +90,28 @@
 (define (enum-with f i)
   (cons-stream i (enum-with f (f i))))
 
+(define (force-stream s)
+  (if (empty-stream? s)
+      empty
+      (cons (head-stream s)
+            (force-stream (tail-stream s)))))
+
+(define (reverse-stream s)
+  (local
+    (define (aux s1 s2)
+      (if (empty-stream? s2)
+          s1
+          (aux (cons-stream (head-stream s2) s1) 
+                            (tail-stream s2))))
+    (aux empty-stream s)))
+
+(define (contains-stream? x s)
+  (and (not (empty-stream? s)) 
+       (or (= x (head-stream s)) 
+           (contains-stream? x (tail-stream s)))))
+
 (define (concat-stream s1 s2)
   (if (empty-stream? s1)
       s2
       (cons-stream (head-stream s1)
                    (concat-stream (tail-stream s1) s2))))
-
-(define (reverse-stream s)
-  (if (empty-stream? s)
-      s
-      (cons-stream (last-stream s) 
-                   (reverse-stream (init-stream s)))))

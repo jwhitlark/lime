@@ -120,15 +120,18 @@ Notice that, if `b` had not been passed as a delayed argument, the expression `(
 
 - `(defmacro (f param1 param2 ...) expr)` (define a new macro)
 
-Macros are a powerful way to extend the syntax of the language itself. A macro definition looks much like a function definition, but it's meaning is very different: the arguments passed to a macro are not evaluated; they are simply substituted in the body. The new expression is then evaluated in the same environment where the macro was called.
+Macros are a powerful way to extend the syntax of the language itself. A macro definition looks much like a function definition, but it's meaning is very different: the arguments passed to a macro are not evaluated; they are simply substituted in the body. The new expression is then evaluated in the same environment where the macro was called:
 
-    ```
     lime> (defmacro (define-zero symbol)
             (define symbol 0))
     lime> (define-zero x)
     lime> x
     0
-    ```
+
+Earlier, we saw how to define short-circuit boolean operators using delayed evaluation. In fact, we can do that by using macros instead:
+
+    lime> (defmacro (my-or a b)
+            (if a true b))
 
 Supported variable types: int, string, bool, lambda, list, nil
 
@@ -172,13 +175,6 @@ Builtin functions:
     lime> (define x 3)
     lime> (eval foo)
     9
-    ```
-
-`eval` is useful when defining macros. Earlier, we saw how to define short-circuit boolean operators using delayed evaluation. In fact, we can do that by using macros instead:
-
-    ```
-    lime> (defmacro (my-or a b)
-            (if (eval a) true (eval b)))
     ```
 
 - `delay` (delay the evaluation of an expression)
@@ -450,9 +446,21 @@ From `imperative.lm`:
     5
     ```
 
+- `for-each <it> <list> <body>` (execute a block on each element of a list)
+
+    ```
+    lime> (for-each word (list "hey" "hello" "world")
+            (println-string word))
+    hey
+    hello
+    world
+    ```
+
+- `for-each-stream <it> <stream> <body>` (for finite streams)
+
 From `logic.lm`:
 
-- `and`, `or` (short-circuited logical operators)
+- `and`, `or` (short-circuit logical operators)
 - `not`, `xor`
 
 From `functional.lm`:
@@ -483,7 +491,7 @@ It is particularly useful in the context of partial function application, when a
 
 From `list.lm`:
 
-- `empty` (a short-hand for the empty list)
+- `empty` (a shorthand for the empty list)
 - `list?` (true if and only if the argument is a list)
 - `map`, `filter`, `fold` (usual higher-order functions)
 
@@ -506,15 +514,6 @@ From `list.lm`:
     (1 2)
     lime> (last (list 1 2 3))
     3
-    ```
-
-- `for-each` (call a given procedure for each element of a list)
-
-    ```
-    lime> (for-each println-string (list "hey" "hello" "world"))
-    hey
-    hello
-    world
     ```
 
 - `take`, `drop` (take/drop the first n elements of a list)
@@ -656,10 +655,8 @@ For example, this is how we build an infinite stream of ones:
 
 - `init-stream`, `last-stream` (for finite streams)
 - `elem-stream`
-- `eq-stream` (test equality of finite streams)
-- `len-stream` (for finite streams)
-- `map-stream`, `filter-stream`, `fold-stream`
-- `for-each-stream` (for finite streams)
+- `map-stream`, `filter-stream`
+- `fold-stream`, `eq-stream`, `len-stream` (for finite streams)
 - `take-stream`, `drop-stream`, `take-while-stream`, `drop-while-stream`
 - `zip-stream`, `zip-with-stream`
 - `repeat` (repeat the argument infinite times)
@@ -676,7 +673,9 @@ For example, this is how we build an infinite stream of ones:
     (true false true false true)
     ```
 
-- `concat-stream`
+- `force-stream` (convert a finite stream to a list)
+
+- `concat-stream` (makes sense only when the first stream is finite)
 
 Credits
 -------

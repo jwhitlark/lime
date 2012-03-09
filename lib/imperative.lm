@@ -1,15 +1,33 @@
 (defmacro (while test body)
   (if (eval test)
       (begin
-        (eval body)
+        body
         (while test body))
       nil))
 
 (defmacro (for i a b body)
   (local
-    (define i (eval a))
-    (define b' (eval b))
-    (while (<= i b')
+    (define i a)
+    (while (<= i b)
       (begin
-        (eval body)
+        body
         (inc! i)))))
+
+(defmacro (for-each i l body)
+  (if (empty? l)
+      nil
+      (local
+        (define i (head l))
+          body
+          (for-each i (tail l)
+            body))))
+
+(defmacro (for-each-stream i s body)
+  (if (empty-stream? s)
+      nil
+      (local
+        (define i (head-stream s))
+          body
+          (for-each-stream i (tail-stream s)
+            body))))
+

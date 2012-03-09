@@ -2,10 +2,10 @@
   (if b false true))
 
 (defmacro (and a b)
-  (if (eval a) (eval b) false))
+  (if a b false))
 
 (defmacro (or a b)
-  (if (eval a) true (eval b)))
+  (if a true b))
 
 (define (xor a b)
   (if a (not b) b))
