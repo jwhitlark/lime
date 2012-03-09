@@ -207,11 +207,11 @@
   (set! l (filter p l)))
 
 (define (take! n &l)
-  (do (- (len l) n) 
+  (for i 1 (- (len l) n) 
     (pop-back! l)))
 
 (define (drop! n &l)
-  (do n 
+  (for i 1 n 
     (pop-front! l)))
 
 (define (take-while! p &l)
@@ -222,7 +222,7 @@
       (begin
         (set! k (+ k 1))
         (set! i (+ i 1))))
-    (do (- (len l) k)
+    (for i 1 (- (len l) k)
       (pop-back! l))))
 
 (define (drop-while! p &l)

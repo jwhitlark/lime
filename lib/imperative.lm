@@ -5,11 +5,11 @@
         (while test body))
       nil))
 
-(defmacro (do k body)
+(defmacro (for i a b body)
   (local
-    (define kv (eval k))
-    (if (> kv 0)
-        (begin
-          (eval body)
-          (do (- kv 1) body))
-        nil)))
+    (define i (eval a))
+    (define b' (eval b))
+    (while (<= i b')
+      (begin
+        (eval body)
+        (inc! i)))))

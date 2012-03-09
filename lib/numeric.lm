@@ -13,6 +13,9 @@
 (define (<= x y)
   (>= y x))
 
+(defmacro (inc! i) 
+  (set! i (+ i 1)))
+
 (define (even n)
   (= 0 (% n 2)))
 

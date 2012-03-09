@@ -199,7 +199,7 @@ namespace lime {
                                      "lambda",
                                      "defmacro",
                                      "while",
-                                     "do" }; 
+                                     "for" }; 
 
   bool align_arguments(const string& code, int pos)
   {

@@ -424,14 +424,16 @@ From `imperative.lm`:
     4
     ```
 
-- `do <times> <body>` (evaluate an expression a fixed number of times)
+- `for <it> <start> <end> <body>`
 
     ```
-    lime> (do 3
-            (println-string "hello!"))
-    hello!
-    hello!
-    hello!
+    lime> (for i 1 5
+            (println i))
+    1
+    2
+    3
+    4
+    5
     ```
 
 From `logic.lm`:
