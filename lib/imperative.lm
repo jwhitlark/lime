@@ -6,7 +6,7 @@
       nil))
 
 (defmacro (do k body)
-  (begin
+  (local
     (define kv (eval k))
     (if (> kv 0)
         (begin

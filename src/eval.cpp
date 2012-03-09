@@ -232,11 +232,19 @@ namespace lime {
         apply_visitor(set_visitor(expr, env_p), expr[1]);
       }
       else if (sym == "begin") {
-        auto inner_env_p = nested_environment(env_p);
         for (int i = 1; i + 1 < expr.size(); ++i)
-          eval(expr[i], inner_env_p);
+          eval(expr[i], env_p);
         if (expr.size() > 1)
-          return eval(expr.back(), inner_env_p);
+          return eval(expr.back(), env_p);
+        else
+          return nil();
+      }
+      else if (sym == "local") {
+        auto local_env_p = nested_environment(env_p);
+        for (int i = 1; i + 1 < expr.size(); ++i)
+          eval(expr[i], local_env_p);
+        if (expr.size() > 1)
+          return eval(expr.back(), local_env_p);
         else
           return nil();
       }

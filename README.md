@@ -24,7 +24,8 @@ Language overview
 
 Basic syntax:
 
-- `(begin expr1 expr2 ...)` (execute several expressions sequentially, in a nested environment; the last expression determines the return value of the whole block)
+- `(begin expr1 expr2 ...)` (evaluate several expressions sequentially, in the current environment; the last expression determines the return value of the whole block)
+- `(local expr1 expr2 ...)` (evaluate the expressions in a nested environment; the last expression determines the return value of the whole block)
 - `(define x expr)` (define a symbol for the first time in the current environment)
 
 Note that a nested definition of the same symbol shadows it:
