@@ -204,7 +204,9 @@ namespace lime {
     template< typename T >
     void operator()(const T& t) const
     {
-      check(false, "first argument to 'defmacro' must be a list.");
+      check(false, 
+            "first argument to 'defmacro' must be a list with the macro's name followed "
+            "by the parameters' names.");
     }
   private:
     list expr;
