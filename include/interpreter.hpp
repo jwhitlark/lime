@@ -19,12 +19,13 @@ namespace lime {
 
   const string bye("\nBye.\n");
 
-  const vector< string > stdlibs { "io.lm",
-                                   "logic.lm",
+  const vector< string > stdlibs { "logic.lm",
+                                   "imperative.lm",
                                    "functional.lm",
                                    "list.lm",
                                    "stream.lm",
-                                   "numeric.lm" };
+                                   "numeric.lm", 
+                                   "io.lm" };
 
   void check(bool test, const string& error_msg);
 

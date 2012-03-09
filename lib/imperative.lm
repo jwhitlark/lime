@@ -1,0 +1,15 @@
+(defmacro (while test body)
+  (if (eval test)
+      (begin
+        (eval body)
+        (while test body))
+      nil))
+
+(defmacro (do k body)
+  (begin
+    (define kv (eval k))
+    (if (> kv 0)
+        (begin
+          (eval body)
+          (do (- kv 1) body))
+        nil)))
