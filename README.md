@@ -103,34 +103,22 @@ We can also selectively delay the evaluation of certain arguments by prefixing t
     
 Notice that, if `b` had not been passed as a delayed argument, the expression `(head l)` would have been evaluated on an empty list, resulting in an error.
 
-- `true`, `false`
-- `nil` (nothing; nada; nichts)
+- `(defmacro (f param1 param2 ...) expr)` (define a new macro)
+
+Macros are a powerful way to extend the syntax of the language itself. A macro definition looks much like a function definition, but it's meaning is very different: the arguments passed to a macro are not evaluated; they are simply substituted in the body. The new expression is then evaluated in the same environment where the macro was called.
+
+    ```
+    lime> (defmacro (define-zero symbol)
+            (define symbol 0))
+    lime> (define-zero x)
+    lime> x
+    0
+    ```
 
 Supported variable types: int, string, bool, lambda, list, nil
 
-- `while <cond> <expr>` (evaluate an expression as long as the condition evaluates to true)
-
-    ```
-    lime> (define i 1)
-    lime> (while (< i 5)
-            (begin
-              (println i)
-              (set! i (+ i 1))))
-    1
-    2
-    3
-    4
-    ```
-
-- `do <times> <expr>` (evaluate an expression a fixed number of times)
-
-    ```
-    lime> (do 3
-            (println-string "hello!"))
-    hello!
-    hello!
-    hello!
-    ```
+- `true`, `false`
+- `nil` (nothing; nada; nichts)
 
 Builtin functions:
 
@@ -408,6 +396,32 @@ From `numeric.lm`:
     lime> (sort! r)
     lime> r
     (1 2 3 4 5 6 7 8 9 10)
+    ```
+
+From `imperative.lm`:
+
+- `while <test> <body>` (evaluate an expression as long as the condition evaluates to true)
+
+    ```
+    lime> (define i 1)
+    lime> (while (< i 5)
+            (begin
+              (println i)
+              (set! i (+ i 1))))
+    1
+    2
+    3
+    4
+    ```
+
+- `do <times> <body>` (evaluate an expression a fixed number of times)
+
+    ```
+    lime> (do 3
+            (println-string "hello!"))
+    hello!
+    hello!
+    hello!
     ```
 
 From `logic.lm`:
