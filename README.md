@@ -159,6 +159,13 @@ Builtin functions:
     9
     ```
 
+`eval` is useful when defining macros. Earlier, we saw how to define short-circuit boolean operators using delayed evaluation. In fact, we can do that by using macros instead:
+
+    ```
+    lime> (defmacro (my-or a b)
+            (if (eval a) true (eval b)))
+    ```
+
 - `delay` (delay the evaluation of an expression)
 - `force` (force the evaluation of a delayed computation)
 
@@ -176,7 +183,9 @@ There are two differences between using `quote`/`eval` and using `delay`/`force`
 - `load` (evaluate the content of the file in the global environment; useful to load functions from external modules)
 
     ```
-    lime> (load "path/to/myfile.lm")
+    lime> (load "examples/fibonacci.lm")
+    lime> (fib 10)
+    55
     ```
 
 - `=` (works with any builtin type, including lists)
