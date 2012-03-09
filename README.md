@@ -31,7 +31,7 @@ Basic syntax:
 Note that a nested definition of the same symbol shadows it:
 
     lime> (define x 1)
-    lime> (begin (define x 2) x)
+    lime> (local (define x 2) x)
     2
     lime> x
     1
@@ -49,10 +49,10 @@ However, we cannot redefine a symbol in the same environment:
     lime> (set! z 2)
     lime> z
     2
-    lime> (begin (set! z 3))
+    lime> (local (set! z 3))
     lime> z
     3
-    lime> (begin (define z 4) (set! z 5))
+    lime> (local (define z 4) (set! z 5))
     lime> z
     3
     ```
