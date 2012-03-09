@@ -1,11 +1,11 @@
 (define (not b)
   (if b false true))
 
-(define (and a $b)
-  (if a (force b) false))
+(defmacro (and a b)
+  (if (eval a) (eval b) false))
 
-(define (or a $b)
-  (if a true (force b)))
+(defmacro (or a b)
+  (if (eval a) true (eval b)))
 
 (define (xor a b)
   (if a (not b) b))
