@@ -397,26 +397,6 @@ namespace lime {
     return apply_visitor(is_atom_visitor(), arg);
   }
 
-  class is_empty_visitor : public static_visitor< bool > {
-  public:
-    bool operator()(const list& lst) const
-    {
-      return lst.empty();
-    }
-    template< typename T >
-    bool operator()(const T& t) const
-    {
-      check(false, "argument to 'empty?' must be a list.");
-    }
-  };
-
-  value is_empty::call(vector< value > args, shared_ptr< environment > caller_env_p)
-  {
-    check(args.size() == 1, "wrong number of arguments to 'empty?' (must be 1).");
-    value arg = eval(args.front(), caller_env_p);
-    return apply_visitor(is_empty_visitor(), arg);
-  }
-
   class len_visitor : public static_visitor< int > {
   public:
     int operator()(const list& lst) const
@@ -944,7 +924,6 @@ namespace lime {
     env_p->set("random", make_shared< random_int >());
     env_p->set("rand-max", RAND_MAX);
     env_p->set("atom?", make_shared< is_atom >());
-    env_p->set("empty?", make_shared< is_empty >());
     env_p->set("len", make_shared< len >());
     env_p->set("cons", make_shared< cons >());
     env_p->set("head", make_shared< head >());

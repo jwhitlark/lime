@@ -1,5 +1,7 @@
 (define empty (quote ()))
 
+(define empty? (compose (= 0) len))
+
 (define list? (compose not atom?))
 
 (define (init l)
