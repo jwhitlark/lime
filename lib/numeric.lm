@@ -16,11 +16,11 @@
 (defmacro (inc! i) 
   (set! i (+ i 1)))
 
-(define (even n)
+(define (even? n)
   (= 0 (% n 2)))
 
-(define odd
-  (compose not even))
+(define odd?
+  (compose not even?))
 
 (define (max a b)
   (if (> a b) a b))
@@ -80,7 +80,7 @@
 (define (pow x n)
   (if (= n 0)
       1
-      (if (even n)
+      (if (even? n)
           (pow (square x) (/ n 2))
           (* x (pow (square x) (/ (- n 1) 2))))))
 

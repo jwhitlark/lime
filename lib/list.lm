@@ -84,7 +84,7 @@
       false
       (or (head l) (any (tail l)))))
 
-(define (contains x l)
+(define (contains? x l)
   (and (not (empty? l)) 
        (or (= x (head l)) 
            (contains x (tail l)))))

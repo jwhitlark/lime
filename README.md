@@ -348,7 +348,7 @@ From `numeric.lm`:
 - `neg` (negate the integer argument)
 - `!=` (actually works for the same types as `=`)
 - `>`, `>=`, `<=`
-- `even`, `odd`
+- `even?`, `odd?`
 - `inc!` (increment an integer variable by 1)
 - `enum` (enumerate all integers starting from the argument; returns a stream)
 
@@ -460,7 +460,7 @@ From `functional.lm`:
 - `apply` (apply a function to an argument)
 
     ```
-    lime> (zip-with apply (list even odd) (list 2 3))
+    lime> (zip-with apply (list even? odd?) (list 2 3))
     (true true)
     ```
 
@@ -490,7 +490,7 @@ From `list.lm`:
     ```
     lime> (map (lambda (x) (* x 2)) (list 1 3 5))
     (2 6 10)
-    lime> (filter odd (range 1 10))
+    lime> (filter odd? (range 1 10))
     (1 3 5 7 9)
     lime> (fold * 1 (range 1 3))
     6
@@ -529,7 +529,7 @@ From `list.lm`:
 - `take-while`, `drop-while`
 
     ```
-    lime> (take-while odd (list 7 9 11 4 6 7 5))
+    lime> (take-while odd? (list 7 9 11 4 6 7 5))
     (7 9 11)
     ```
 
@@ -549,25 +549,25 @@ From `list.lm`:
     ```
     lime> (count 2 (list 1 2 3 2 4 2))
     3
-    lime> (count-if even (range 1 10))
+    lime> (count-if even? (range 1 10))
     5
     ```
 
 - `all`, `any`
 
     ```
-    lime> (all (map even (list 2 6 3 8)))
+    lime> (all (map even? (list 2 6 3 8)))
     false
-    lime> (any (map even (list 2 6 3 8)))
+    lime> (any (map even? (list 2 6 3 8)))
     true
     ```
 
-- `contains`
+- `contains?`
 
     ```
-    lime> (contains 5 (range 1 10))
+    lime> (contains? 5 (range 1 10))
     true
-    lime> (contains 12 (range 1 10))
+    lime> (contains? 12 (range 1 10))
     false
     ```
 
