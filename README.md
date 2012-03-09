@@ -2,6 +2,20 @@ LIME: Lisp Implementation with Moderate Effort
 ==============================================
 (was: Lisp Implementation with Minimal Effort)
 
+LIME is a dynamic programming language with LISP-like syntax. It started out as a minimal subset of LISP, and quickly incorporated several new features that enable different programming styles. Here are a few facts:
+
+- partial function application
+- call-by-value semantics and eager evaluation as default
+- optional, explicit delayed evaluation
+- optional call-by-reference
+- macros
+- input and output code as data
+- a library for infinite streams
+- constructs for both functional and imperative programming
+- a REPL with auto-indent
+
+All together, these features allow for implementing most of the functionality in the standard library - written in LIME itself - leaving the interpreter relatively small.
+
 Installation
 ------------
 
@@ -335,7 +349,7 @@ From `numeric.lm`:
 - `!=` (actually works for the same types as `=`)
 - `>`, `>=`, `<=`
 - `even`, `odd`
-- `succ` (return the successor of an integer)
+- `inc!` (increment an integer variable by 1)
 - `enum` (enumerate all integers starting from the argument; returns a stream)
 
     ```
