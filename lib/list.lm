@@ -61,11 +61,11 @@
 
 (define zip (zip-with list))
 
-(define (count x l) 
-  (len (filter (= x) l)))
-
 (define (count-if p l)
   (len (filter p l)))
+
+(define (count x l)
+  (count-if (= x) l))
 
 (define (all l)
   (if (empty? l)

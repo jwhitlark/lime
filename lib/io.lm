@@ -8,7 +8,18 @@
      (print-string s)
      (print-string "\n")))
 
-(define print-stream (compose print force-stream))
+(define (print-stream s)
+  (begin
+    (print-string "(")
+    (if (not (empty-stream? s))
+        (begin
+          (for-each-stream x (init-stream s)
+            (begin 
+              (print x) 
+              (print-string " ")))
+          (print (last-stream s)))
+        nil)
+    (print-string ")")))
 
 (define (println-stream s)
   (begin

@@ -105,6 +105,22 @@
                             (tail-stream s2))))
     (aux empty-stream s)))
 
+(define (count-if-stream p s)
+  (len-stream (filter-stream p s)))
+
+(define (count-stream x s) 
+  (count-if-stream (= x) s))
+
+(define (all-stream s)
+  (if (empty-stream? s)
+      true
+      (and (head-stream s) (all-stream (tail-stream s)))))
+
+(define (any-stream s)
+  (if (empty-stream? s)
+      false
+      (or (head-stream s) (any-stream (tail-stream s)))))
+
 (define (contains-stream? x s)
   (and (not (empty-stream? s)) 
        (or (= x (head-stream s)) 

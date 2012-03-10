@@ -4,21 +4,13 @@
       (+ (fib-slow (- n 1)) 
          (fib-slow (- n 2)))))
 
-(define (fib-better n)
+(define (fib n)
   (begin
     (define (fib-aux n a b)
       (if (= n 0)             
           a
           (fib-aux (- n 1) b (+ a b))))
     (fib-aux n 0 1)))
-
-(define (fib n)
-  (begin
-    (define f (list 0 1))
-    (for i 1 n
-      (set! f (list (elem 2 f) 
-                    (+ (elem 1 f) (elem 2 f)))))
-    (elem 1 f)))
 
 (define fib-stream
   (cons-stream 1
