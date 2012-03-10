@@ -675,7 +675,7 @@ For example, this is how we build an infinite stream of ones:
 
 - `force-stream` (convert a finite stream to a list)
 - `count-stream`, `count-if-stream`, `all-stream`, `any-stream`
-- `contains-stream` (for finite streams)
+- `contains-stream?` (for finite streams)
 - `concat-stream` (makes sense only when the first stream is finite)
 
 Credits
