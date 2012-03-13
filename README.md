@@ -90,7 +90,7 @@ To pass an argument by reference, so that its value can be modified, you must pr
               (set! y "foo")))
     lime> (define a "bar")
     lime> (define b "bar")
-    lime> (foo a b)
+    lime> (foo! a b)
     lime> a
     "foo"
     lime> b
